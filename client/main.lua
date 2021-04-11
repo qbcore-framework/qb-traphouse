@@ -253,7 +253,7 @@ Citizen.CreateThread(function()
                     inRange = true
                     if ExitDistance < 1 then
                         DrawText3Ds(data.coords["enter"].x + POIOffsets.exit.x, data.coords["enter"].y + POIOffsets.exit.y, data.coords["enter"].z - Config.MinZOffset + POIOffsets.exit.z, '~b~E~w~ - Leave')
-                        if IsControlJustPressed(0, Keys["E"]) then
+                        if IsControlJustPressed(0, 38) then
                             LeaveTraphouse(data)
                         end
                     end
@@ -266,10 +266,10 @@ Citizen.CreateThread(function()
                         if not IsKeyHolder then
                             DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z + 0.2, '~b~H~w~ - View Inventory')
                             DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z, '~b~E~w~ - Take Over (~g~$5000~w~)')
-                            if IsControlJustPressed(0, Keys["E"]) then
+                            if IsControlJustPressed(0, 38) then
                                 TriggerServerEvent('qb-traphouses:server:TakeoverHouse', CurrentTraphouse)
                             end
-                            if IsControlJustPressed(0, Keys["H"]) then
+                            if IsControlJustPressed(0, 74) then
                                 local TraphouseInventory = {}
                                 TraphouseInventory.label = "traphouse_"..CurrentTraphouse
                                 TraphouseInventory.items = data.inventory
@@ -282,18 +282,18 @@ Citizen.CreateThread(function()
                             if IsHouseOwner then
                                 DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z - 0.2, '~b~/multikeys~w~ [id] - To Give Keys')
                                 DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z - 0.4, '~b~G~w~ - See Pin Code')
-                                if IsControlJustPressed(0, Keys["G"]) then
+                                if IsControlJustPressed(0, 47) then
                                     QBCore.Functions.Notify('Pincode: '..data.pincode)
                                 end
                             end
-                            if IsControlJustPressed(0, Keys["H"]) then
+                            if IsControlJustPressed(0, 74) then
                                 local TraphouseInventory = {}
                                 TraphouseInventory.label = "traphouse_"..CurrentTraphouse
                                 TraphouseInventory.items = data.inventory
                                 TraphouseInventory.slots = 2
                                 TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
                             end
-                            if IsControlJustPressed(0, Keys["E"]) then
+                            if IsControlJustPressed(0, 38) then
                                 TriggerServerEvent("qb-traphouses:server:TakeMoney", CurrentTraphouse)
                             end
                         end
