@@ -328,7 +328,7 @@ function EnterTraphouse(data)
     POIOffsets = data[2]
     CurrentTraphouse = ClosestTraphouse
     InsideTraphouse = true
-    SetRainFxIntensity(0.0)
+    SetRainLevel(0.0)
     TriggerEvent('qb-weathersync:client:DisableSync')
     print('Entered')
     FreezeEntityPosition(TraphouseObj, true)
