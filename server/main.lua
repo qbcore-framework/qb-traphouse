@@ -14,30 +14,12 @@ AddEventHandler('qb-traphouses:server:TakeoverHouse', function(Traphouse)
     local CitizenId = Player.PlayerData.citizenid
 
     if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-        if Player.PlayerData.items ~= nil then 
-            for k, v in pairs(Player.PlayerData.items) do 
-                if cash ~= nil then
-                    if ItemList[Player.PlayerData.items[k].name] ~= nil then 
-                        if Player.PlayerData.items[k].name == "cash" and Player.PlayerData.items[k].amount >= Config.TakeoverPrice then 
-                            Player.Functions.RemoveItem("cash", Config.TakeoverPrice, k)
-                            TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "remove")
-                            TriggerClientEvent('qb-traphouses:client:TakeoverHouse', src, Traphouse)
-                        else
-                            TriggerClientEvent('QBCore:Notify', src, "You do not have cash", 'error')   
-                            break
-                        end
-                    end
-                else
-                    TriggerClientEvent('QBCore:Notify', src, "You do not have cash", 'error')   
-                    break
-                    
-                end
-            end
-            
-            -- Player.Functions.AddMoney("cash", price, "sold pawnable items")
+        if Player.Functions.RemoveMoney('cash', Config.TakeoverPrice) then
+            TriggerClientEvent('qb-traphouses:client:TakeoverHouse', src, Traphouse)
+        else
+            TriggerClientEvent('QBCore:Notify', src, 'You dont have enough cash..', 'error')
         end
     end
-    
 end)
 
 RegisterServerEvent('qb-traphouses:server:AddHouseKeyHolder')
@@ -178,13 +160,11 @@ AddEventHandler('qb-traphouses:server:TakeMoney', function(TraphouseId)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Config.TrapHouses[TraphouseId].money ~= 0 then
-        --Player.Functions.AddMoney('cash', Config.TrapHouses[TraphouseId].money)
-        Player.Functions.AddItem("cash", Config.TrapHouses[TraphouseId].money, false) 
-	    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "add")
+        Player.Functions.AddMoney('cash', Config.TrapHouses[TraphouseId].money)
         Config.TrapHouses[TraphouseId].money = 0
         TriggerClientEvent('qb-traphouses:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
     else
-        TriggerClientEvent('QBCore:Notify', src, 'There Is No Money', 'error')
+        TriggerClientEvent('QBCore:Notify', src, 'There issent any money in the cupboard', 'error')
     end
 end)
 
@@ -296,9 +276,7 @@ AddEventHandler('qb-traphouses:server:RobNpc', function(Traphouse)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["stickynote"], "add")
     else
         local amount = math.random(1, 80)
-        --Player.Functions.AddMoney('cash', amount)
-        Player.Functions.AddItem("cash", amount, false) 
-	    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['cash'], "add")
+        Player.Functions.AddMoney('cash', amount)
     end
 end)
 
