@@ -7,7 +7,7 @@ Traphouses.Functions.OpenPinpad = function() {
 
 Traphouses.Functions.ClosePinpad = function() {
     $(".container").fadeOut(300);
-    $.post('https://qb-traphouses/PinpadClose');
+    $.post('https://qb-traphouse/PinpadClose');
 }
 
 $(document).on('keydown', function() {
@@ -48,7 +48,7 @@ $(document).on('keydown', function() {
         case 13:
             var v = $("#PINbox").val();
             if (v == "") {
-                $.post('https://qb-traphouses/ErrorMessage', JSON.stringify({
+                $.post('https://qb-traphouse/ErrorMessage', JSON.stringify({
                     message: "Vul een code in!"
                 }))
             } else {
@@ -56,7 +56,7 @@ $(document).on('keydown', function() {
                     pin: v
                 }
                 $("#PINbox").val("");
-                $.post('https://qb-traphouses/EnterPincode', JSON.stringify({
+                $.post('https://qb-traphouse/EnterPincode', JSON.stringify({
                     pin: data.pin
                 }))
                 Traphouses.Functions.ClosePinpad();
@@ -117,11 +117,11 @@ function clearForm(e){
 
 function submitForm(e) {
 	if (e.value == "") {
-		$.post('https://qb-traphouses/ErrorMessage', JSON.stringify({
+		$.post('https://qb-traphouse/ErrorMessage', JSON.stringify({
             message: "Vul een code in!"
         }))
 	} else {
-        $.post('https://qb-traphouses/EnterPincode', JSON.stringify({
+        $.post('https://qb-traphouse/EnterPincode', JSON.stringify({
             pin: e.value
         }))
         $("#PINbox").val("");
