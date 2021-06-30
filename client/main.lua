@@ -58,12 +58,12 @@ function SetClosestTraphouse()
     local dist = nil
     for id, traphouse in pairs(Config.TrapHouses) do
         if current ~= nil then
-            if #(pos - vector3(Config.TrapHouses[id].coords.enter.x, Config.TrapHouses[id].coords.enter.y, Config.TrapHouses[id].coords.enter.z)) < dist then
+            if #(pos - Config.TrapHouses[id].coords.enter) < dist then
                 current = id
-                dist = #(pos - vector3(Config.TrapHouses[id].coords.enter.x, Config.TrapHouses[id].coords.enter.y, Config.TrapHouses[id].coords.enter.z))
+                dist = #(pos - Config.TrapHouses[id].coords.enter)
             end
         else
-            dist = #(pos - vector3(Config.TrapHouses[id].coords.enter.x, Config.TrapHouses[id].coords.enter.y, Config.TrapHouses[id].coords.enter.z))
+            dist = #(pos - Config.TrapHouses[id].coords.enter)
             current = id
         end
     end
@@ -171,7 +171,7 @@ Citizen.CreateThread(function()
             local pos = GetEntityCoords(ped)
             if ClosestTraphouse ~= nil then
                 local data = Config.TrapHouses[ClosestTraphouse]
-                local dist = #(pos - vector3(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z))
+                local dist = #(pos - data.coords["enter"])
                 if dist < 200 then
                     if aiming then
                         local pcoords = GetEntityCoords(targetPed)
@@ -297,7 +297,7 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                local EnterDistance = #(pos - vector3(data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z))
+                local EnterDistance = #(pos - data.coords["enter"])
                 if EnterDistance < 20 then
                     inRange = true
                     if EnterDistance < 1 then
@@ -344,7 +344,7 @@ function LeaveTraphouse(data)
         TriggerEvent('qb-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
         SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
-        SetEntityHeading(ped, data.coords["enter"].h)
+        SetEntityHeading(ped, 107.71)
         TraphouseObj = nil
         POIOffsets = nil
         CurrentTraphouse = nil
