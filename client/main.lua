@@ -344,7 +344,7 @@ function LeaveTraphouse(data)
         TriggerEvent('qb-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
         SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
-        SetEntityHeading(ped, data.coords["enter"].h)
+        SetEntityHeading(ped, data.coords["enter"].w)
         TraphouseObj = nil
         POIOffsets = nil
         CurrentTraphouse = nil
