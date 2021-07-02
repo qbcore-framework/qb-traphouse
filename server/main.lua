@@ -1,12 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
-local ItemList = {
-    ["cash"] = "cash"
-}
-
--- Code
-
 RegisterServerEvent('qb-traphouse:server:TakeoverHouse')
 AddEventHandler('qb-traphouse:server:TakeoverHouse', function(Traphouse)
     local src = source
