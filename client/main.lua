@@ -1,5 +1,5 @@
-isLoggedIn = false
-PlayerData = {}
+local isLoggedIn = false
+local PlayerData = {}
 local ClosestTraphouse = nil
 local InsideTraphouse = false
 local CurrentTraphouse = nil
@@ -10,7 +10,6 @@ local IsHouseOwner = false
 local InTraphouseRange = false
 local CodeNPC = nil
 local IsRobbingNPC = false
-
 
 -- Code
 
