@@ -310,19 +310,13 @@ end)
 function EnterTraphouse(data)
     local coords = { x = data.coords["enter"].x, y = data.coords["enter"].y, z= data.coords["enter"].z - Config.MinZOffset}
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-    data = exports['qb-interior']:CreateTrevorsShell(coords) 
+    data = exports['qb-interior']:CreateTrevorsShell(coords)
     TraphouseObj = data[1]
     POIOffsets = data[2]
     CurrentTraphouse = ClosestTraphouse
     InsideTraphouse = true
-    SetRainLevel(0.0)
     TriggerEvent('qb-weathersync:client:DisableSync')
-    print('Entered')
     FreezeEntityPosition(TraphouseObj, true)
-    SetWeatherTypePersist('EXTRASUNNY')
-    SetWeatherTypeNow('EXTRASUNNY')
-    SetWeatherTypeNowPersist('EXTRASUNNY')
-    NetworkOverrideClockTime(23, 0, 0)
 end
 
 function LeaveTraphouse(data)
