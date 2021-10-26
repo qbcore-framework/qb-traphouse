@@ -316,7 +316,7 @@ function EnterTraphouse(data)
     CurrentTraphouse = ClosestTraphouse
     InsideTraphouse = true
     TriggerEvent('qb-weathersync:client:DisableSync')
-    FreezeEntityPosition(TraphouseObj, true)
+    -- FreezeEntityPosition(TraphouseObj, true) removed fixed the NUI Callback error and still worked
 end
 
 function LeaveTraphouse(data)

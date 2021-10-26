@@ -6,7 +6,7 @@ Config.TrapHouses = {
     [1] = {
         coords = {
             ["enter"] = vector3(-1202.13, -1308.48, 4.91),
-            ["interaction"] = vector3(-1207.66, -1309.69, -27.64),
+            ["interaction"] = vector3(-1207.34, -1309.36, -32.66),
         },
         keyholders = {},
         pincode = 1234,
