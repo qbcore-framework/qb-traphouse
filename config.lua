@@ -9,7 +9,7 @@ Config.TrapHouses = {
             ["interaction"] = vector3(-1207.34, -1309.36, -32.66),
         },
         keyholders = {},
-        pincode = 1234,
+        pincode = math.random(1111, 4444),
         inventory = {},
         opened = false,
         takingover = false,
