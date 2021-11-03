@@ -180,7 +180,7 @@ Citizen.CreateThread(function()
                                 while not HasAnimDictLoaded(dict) do
                                     Citizen.Wait(10)
                                 end
-                        
+
                                 SetEveryoneIgnorePlayer(PlayerId(), true)
                                 TaskStandStill(targetPed, RobbingTime * 1000)
                                 FreezeEntityPosition(targetPed, true)
@@ -367,15 +367,15 @@ function AddKeyHolder(CitizenId, Traphouse)
     if #Config.TrapHouses[Traphouse].keyholders <= 6 then
         if not HasCitizenIdHasKey(CitizenId, Traphouse) then
             if #Config.TrapHouses[Traphouse].keyholders == 0 then
-                table.insert(Config.TrapHouses[Traphouse].keyholders, {
+                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
                     citizenid = CitizenId,
                     owner = true,
-                })
+                }
             else
-                table.insert(Config.TrapHouses[Traphouse].keyholders, {
+                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
                     citizenid = CitizenId,
                     owner = false,
-                })
+                }
             end
             QBCore.Functions.Notify(CitizenId..' Has Been Added To The Traphouse!')
         else

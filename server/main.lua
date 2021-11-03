@@ -21,22 +21,22 @@ AddEventHandler('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId, Tra
     if Config.TrapHouses[TraphouseId] ~= nil then
         if IsOwner then
             Config.TrapHouses[TraphouseId].keyholders = {}
-            Config.TrapHouses[TraphouseId].pincode = math.random(1111, 4444) 
+            Config.TrapHouses[TraphouseId].pincode = math.random(1111, 4444)
         end
 
         if Config.TrapHouses[TraphouseId].keyholders == nil then
-            table.insert(Config.TrapHouses[TraphouseId].keyholders, {
+            Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
                 citizenid = CitizenId,
                 owner = IsOwner,
-            })
+            }
             TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
         else
             if #Config.TrapHouses[TraphouseId].keyholders + 1 <= 6 then
                 if not HasCitizenIdHasKey(CitizenId, TraphouseId) then
-                    table.insert(Config.TrapHouses[TraphouseId].keyholders, {
+                    Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
                         citizenid = CitizenId,
                         owner = IsOwner,
-                    })
+                    }
                     TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
                 end
             else
@@ -67,10 +67,10 @@ function AddKeyHolder(CitizenId, Traphouse, IsOwner)
     end
     if #Config.TrapHouses[Traphouse].keyholders <= 6 then
         if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-            table.insert(Config.TrapHouses[Traphouse].keyholders, {
+            Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
                 citizenid = CitizenId,
                 owner = IsOwner,
-            })
+            }
         end
     end
 end
@@ -92,7 +92,7 @@ end
 QBCore.Commands.Add("entertraphouse", "Enter traphouse", {}, false, function(source, args)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
- 
+
     TriggerClientEvent('qb-traphouse:client:EnterTraphouse', src)
 end)
 
@@ -110,22 +110,22 @@ QBCore.Commands.Add("multikeys", "Give Keys To Traphouse", {{name = "id", help =
                 if Config.TrapHouses[Traphouse] ~= nil then
                     if IsOwner then
                         Config.TrapHouses[Traphouse].keyholders = {}
-                        Config.TrapHouses[Traphouse].pincode = math.random(1111, 4444) 
+                        Config.TrapHouses[Traphouse].pincode = math.random(1111, 4444)
                     end
-            
+
                     if Config.TrapHouses[Traphouse].keyholders == nil then
-                        table.insert(Config.TrapHouses[Traphouse].keyholders, {
+                        Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
                             citizenid = TargetData.PlayerData.citizenid,
                             owner = IsOwner,
-                        })
+                        }
                         TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
                     else
                         if #Config.TrapHouses[Traphouse].keyholders + 1 <= 6 then
                             if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
-                                table.insert(Config.TrapHouses[Traphouse].keyholders, {
+                                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
                                     citizenid = TargetData.PlayerData.citizenid,
                                     owner = IsOwner,
-                                })
+                                }
                                 TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
                             end
                         else
@@ -200,10 +200,10 @@ function AddHouseItem(traphouseId, slot, itemName, amount, info, source)
             info = info ~= nil and info or "",
             label = itemInfo["label"],
             description = itemInfo["description"] ~= nil and itemInfo["description"] or "",
-            weight = itemInfo["weight"], 
-            type = itemInfo["type"], 
-            unique = itemInfo["unique"], 
-            useable = itemInfo["useable"], 
+            weight = itemInfo["weight"],
+            type = itemInfo["type"],
+            unique = itemInfo["unique"],
+            useable = itemInfo["useable"],
             image = itemInfo["image"],
             slot = slot,
         }
@@ -258,7 +258,7 @@ AddEventHandler('qb-traphouse:server:RobNpc', function(Traphouse)
     local Player = QBCore.Functions.GetPlayer(src)
     local Chance = math.random(1, 10)
     local odd = math.random(1, 10)
-    
+
     if Chance == odd then
         local info = {
             label = "Traphouse Pincode: "..Config.TrapHouses[Traphouse].pincode
