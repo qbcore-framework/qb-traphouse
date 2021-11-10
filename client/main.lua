@@ -1,4 +1,4 @@
-local isLoggedIn = false
+local QBCore = exports['qb-core']:GetCoreObject()
 local PlayerData = {}
 local ClosestTraphouse = nil
 local InsideTraphouse = false
@@ -15,7 +15,7 @@ local IsRobbingNPC = false
 
 Citizen.CreateThread(function()
     while true do
-        if isLoggedIn then
+        if LocalPlayer.state.isLoggedIn then
             SetClosestTraphouse()
         end
         Citizen.Wait(1000)
@@ -25,7 +25,6 @@ end)
 Citizen.CreateThread(function()
     Wait(1000)
     if QBCore.Functions.GetPlayerData() ~= nil then
-        isLoggedIn = true
         PlayerData = QBCore.Functions.GetPlayerData()
         QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
             Config.TrapHouses = trappies
@@ -35,7 +34,6 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-    isLoggedIn = true
     PlayerData = QBCore.Functions.GetPlayerData()
     QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
         Config.TrapHouses = trappies

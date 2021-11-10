@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 RegisterServerEvent('qb-traphouse:server:TakeoverHouse')
 AddEventHandler('qb-traphouse:server:TakeoverHouse', function(Traphouse)
     local src = source
