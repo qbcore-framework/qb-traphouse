@@ -13,16 +13,16 @@ local IsRobbingNPC = false
 
 -- Code
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         if LocalPlayer.state.isLoggedIn then
             SetClosestTraphouse()
         end
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(1000)
     if QBCore.Functions.GetPlayerData() ~= nil then
         PlayerData = QBCore.Functions.GetPlayerData()
@@ -32,8 +32,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerData = QBCore.Functions.GetPlayerData()
     QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
         Config.TrapHouses = trappies
@@ -107,8 +106,7 @@ function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('qb-traphouse:client:EnterTraphouse')
-AddEventHandler('qb-traphouse:client:EnterTraphouse', function(code)
+RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function(code)
     if ClosestTraphouse ~= nil then
         if InTraphouseRange then
             local data = Config.TrapHouses[ClosestTraphouse]
@@ -151,7 +149,7 @@ end
 
 local RobbingTime = 3
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local aiming, targetPed = GetEntityPlayerIsFreeAimingAt(PlayerId(-1))
         if targetPed ~= 0 and not IsPedAPlayer(targetPed) then
@@ -170,13 +168,13 @@ Citizen.CreateThread(function()
                                 if IsPedInAnyVehicle(targetPed) then
                                     TaskLeaveVehicle(targetPed, GetVehiclePedIsIn(targetPed), 1)
                                 end
-                                Citizen.Wait(500)
+                                Wait(500)
                                 InDistance = true
 
                                 local dict = 'random@mugging3'
                                 RequestAnimDict(dict)
                                 while not HasAnimDictLoaded(dict) do
-                                    Citizen.Wait(10)
+                                    Wait(10)
                                 end
 
                                 SetEveryoneIgnorePlayer(PlayerId(), true)
@@ -186,7 +184,7 @@ Citizen.CreateThread(function()
                                 TaskPlayAnim(targetPed, dict, 'handsup_standing_base', 2.0, -2, 15.0, 1, 0, 0, 0, 0)
                                 for i = 1, RobbingTime / 2, 1 do
                                     PlayAmbientSpeech1(targetPed, "GUN_BEG", "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
-                                    Citizen.Wait(2000)
+                                    Wait(2000)
                                 end
                                 FreezeEntityPosition(targetPed, true)
                                 IsRobbingNPC = true
@@ -216,14 +214,14 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                Citizen.Wait(1000)
+                Wait(1000)
             end
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 
         local ped = PlayerPedId()
@@ -298,10 +296,10 @@ Citizen.CreateThread(function()
                 end
             end
         else
-            Citizen.Wait(2000)
+            Wait(2000)
         end
 
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
@@ -321,7 +319,7 @@ function LeaveTraphouse(data)
     local ped = PlayerPedId()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     exports['qb-interior']:DespawnInterior(TraphouseObj, function()
         TriggerEvent('qb-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
@@ -334,8 +332,7 @@ function LeaveTraphouse(data)
     end)
 end
 
-RegisterNetEvent('qb-traphouse:client:TakeoverHouse')
-AddEventHandler('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
+RegisterNetEvent('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
     local ped = PlayerPedId()
 
     QBCore.Functions.Progressbar("takeover_traphouse", "Taking Over", math.random(1000, 3000), false, true, {
@@ -386,8 +383,7 @@ function AddKeyHolder(CitizenId, Traphouse)
     IsHouseOwner = IsOwner(CitizenId)
 end
 
-RegisterNetEvent('qb-traphouse:client:SyncData')
-AddEventHandler('qb-traphouse:client:SyncData', function(k, data)
+RegisterNetEvent('qb-traphouse:client:SyncData', function(k, data)
     Config.TrapHouses[k] = data
     IsKeyHolder = HasKey(PlayerData.citizenid)
     IsHouseOwner = IsOwner(PlayerData.citizenid)
