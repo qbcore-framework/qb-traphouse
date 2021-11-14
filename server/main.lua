@@ -1,7 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-RegisterServerEvent('qb-traphouse:server:TakeoverHouse')
-AddEventHandler('qb-traphouse:server:TakeoverHouse', function(Traphouse)
+RegisterNetEvent('qb-traphouse:server:TakeoverHouse', function(Traphouse)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local CitizenId = Player.PlayerData.citizenid
@@ -15,8 +14,7 @@ AddEventHandler('qb-traphouse:server:TakeoverHouse', function(Traphouse)
     end
 end)
 
-RegisterServerEvent('qb-traphouse:server:AddHouseKeyHolder')
-AddEventHandler('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
+RegisterNetEvent('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -148,8 +146,7 @@ QBCore.Commands.Add("multikeys", "Give Keys To Traphouse", {{name = "id", help =
     end
 end)
 
-RegisterServerEvent('qb-traphouse:server:TakeMoney')
-AddEventHandler('qb-traphouse:server:TakeMoney', function(TraphouseId)
+RegisterNetEvent('qb-traphouse:server:TakeMoney', function(TraphouseId)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Config.TrapHouses[TraphouseId].money ~= 0 then
@@ -162,7 +159,7 @@ AddEventHandler('qb-traphouse:server:TakeMoney', function(TraphouseId)
 end)
 
 function SellTimeout(traphouseId, slot, itemName, amount, info)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         if itemName == "markedbills" then
             SetTimeout(math.random(1000, 5000), function()
                 if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
@@ -182,7 +179,7 @@ function SellTimeout(traphouseId, slot, itemName, amount, info)
                     end
                 end)
                 if amount > 1 then
-                    Citizen.Wait(SellData.wait)
+                    Wait(SellData.wait)
                 end
             end
         end
@@ -254,8 +251,7 @@ function CanItemBeSaled(item)
     return retval
 end
 
-RegisterServerEvent('qb-traphouse:server:RobNpc')
-AddEventHandler('qb-traphouse:server:RobNpc', function(Traphouse)
+RegisterNetEvent('qb-traphouse:server:RobNpc', function(Traphouse)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local Chance = math.random(1, 10)
