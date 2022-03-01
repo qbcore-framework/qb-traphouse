@@ -16,7 +16,7 @@ local Translations = {
         added = "%{value} Has Been Added To The Traphouse!",
     },
     info = {
-        enter = "Enter traphouse",
+        enter = "Enter Traphouse",
         give_keys = "Give Keys of Traphouse",
         pincode = "Traphouse Pincode: %{value}",
         taking_over = "Taking Over",
@@ -26,7 +26,20 @@ local Translations = {
         take_cash = "~b~E~w~ - Take Cash (~g~$%{value}~w~)",
         inventory = "~b~H~w~ - View Inventory",
         take_over = "~b~E~w~ - Take Over (~g~$5000~w~)",
-        leave = "~b~E~w~ - Leave",
+        leave = "~b~E~w~ - Leave Traphouse",
+    },
+    targetInfo = {
+        enter = "Enter Traphouse",
+        give_keys = "Give Keys of Traphouse",
+        pincode = "Traphouse Pincode: %{value}",
+        taking_over = "Taking Over",
+        pin_code_see = "See Pin Code",
+        pin_code = "Pincode: %{value}",
+        multikeys = "Give Keys (use /multikey [id])",
+        take_cash = "Take Cash ($%{value})",
+        inventory = "View Inventory",
+        take_over = "Take Over ($5000)",
+        leave = "Leave Traphouse",
     }
 }
 
