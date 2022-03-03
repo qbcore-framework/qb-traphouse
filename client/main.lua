@@ -8,42 +8,14 @@ local POIOffsets = nil
 local IsKeyHolder = false
 local IsHouseOwner = false
 local InTraphouseRange = false
-local CodeNPC = nil
+local CanRob = true
 local IsRobbingNPC = false
+local RobbingTime = 3
 
--- Code
 
-Citizen.CreateThread(function()
-    if Config.UseTarget then
-        SetTraphouseEntranceTargets()
-    end
-    while true do
-        if LocalPlayer.state.isLoggedIn then
-            SetClosestTraphouse()
-        end
-        Citizen.Wait(1000)
-    end
-end)
+-- Functions
 
-Citizen.CreateThread(function()
-    Wait(1000)
-    if QBCore.Functions.GetPlayerData() ~= nil then
-        PlayerData = QBCore.Functions.GetPlayerData()
-        QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
-            Config.TrapHouses = trappies
-        end)
-    end
-end)
-
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-    PlayerData = QBCore.Functions.GetPlayerData()
-    QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
-        Config.TrapHouses = trappies
-    end)
-end)
-
-function RegisterTraphouseEntranceTarget(traphouseID, traphouseData)
+local function RegisterTraphouseEntranceTarget(traphouseID, traphouseData)
     local coords = traphouseData.coords['enter']
     local boxName = 'traphouseEntrance' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['enter']
@@ -67,7 +39,7 @@ function RegisterTraphouseEntranceTarget(traphouseID, traphouseData)
     Config.TrapHouses[traphouseID].polyzoneBoxData['enter'].created = true
 end
 
-function SetTraphouseEntranceTargets()
+local function SetTraphouseEntranceTargets()
     if Config.TrapHouses and next(Config.TrapHouses) then
         for id, traphouse in pairs(Config.TrapHouses) do
             if traphouse and traphouse.coords and traphouse.coords['enter'] then
@@ -81,7 +53,7 @@ function SetTraphouseEntranceTargets()
     end
 end
 
-function RegisterTraphouseInteractionTarget(traphouseID, traphouseData, options)
+local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData, options)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
@@ -97,7 +69,7 @@ function RegisterTraphouseInteractionTarget(traphouseID, traphouseData, options)
     Config.TrapHouses[traphouseID].polyzoneBoxData['interaction'].created = true
 end
 
-function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
+local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
     local coords = coords
     local boxName = 'traphouseExit' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['exit']
@@ -120,7 +92,7 @@ function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
     Config.TrapHouses[traphouseID].polyzoneBoxData['exit'].created = true
 end
 
-function SetClosestTraphouse()
+local function SetClosestTraphouse()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
@@ -140,7 +112,7 @@ function SetClosestTraphouse()
     IsHouseOwner = IsOwner(PlayerData.citizenid)
 end
 
-function HasKey(CitizenId)
+local function HasKey(CitizenId)
     local haskey = false
     if ClosestTraphouse ~= nil then
         if Config.TrapHouses[ClosestTraphouse].keyholders ~= nil and next(Config.TrapHouses[ClosestTraphouse].keyholders) ~= nil then
@@ -154,7 +126,7 @@ function HasKey(CitizenId)
     return haskey
 end
 
-function IsOwner(CitizenId)
+local function IsOwner(CitizenId)
     local retval = false
     if ClosestTraphouse ~= nil then
         if Config.TrapHouses[ClosestTraphouse].keyholders ~= nil and next(Config.TrapHouses[ClosestTraphouse].keyholders) ~= nil then
@@ -172,7 +144,7 @@ function IsOwner(CitizenId)
     return retval
 end
 
-function DrawText3Ds(x, y, z, text)
+local function DrawText3Ds(x, y, z, text)
 	SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
@@ -187,8 +159,95 @@ function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('qb-traphouse:client:EnterTraphouse')
-AddEventHandler('qb-traphouse:client:EnterTraphouse', function(code)
+local function EnterTraphouse(data)
+    local coords = { x = data.coords["enter"].x, y = data.coords["enter"].y, z= data.coords["enter"].z - Config.MinZOffset}
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+    data = exports['qb-interior']:CreateTrevorsShell(coords)
+    TraphouseObj = data[1]
+    POIOffsets = data[2]
+    CurrentTraphouse = ClosestTraphouse
+    InsideTraphouse = true
+    TriggerEvent('qb-weathersync:client:DisableSync')
+    FreezeEntityPosition(TraphouseObj, true)
+end
+
+local function LeaveTraphouse(k, data)
+    local ped = PlayerPedId()
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+    DoScreenFadeOut(250)
+    Citizen.Wait(250)
+    exports['qb-interior']:DespawnInterior(TraphouseObj, function()
+        TriggerEvent('qb-weathersync:client:EnableSync')
+        DoScreenFadeIn(250)
+        SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
+        SetEntityHeading(ped, 107.71)
+        TraphouseObj = nil
+        POIOffsets = nil
+        CurrentTraphouse = nil
+        InsideTraphouse = false
+    end)
+
+    if Config.UseTarget then
+        exports['qb-target']:RemoveZone('traphouseInteraction' .. k)
+        data.polyzoneBoxData['interaction'].created = false
+
+        exports['qb-target']:RemoveZone('traphouseExit' .. k)
+        data.polyzoneBoxData['exit'].created = false
+    end
+end
+
+local function RobTimeout(timeout)
+    SetTimeout(timeout, function()
+        CanRob = true
+    end)
+end
+
+local function HasCitizenIdHasKey(CitizenId, Traphouse)
+    local retval = false
+    for _, data in pairs(Config.TrapHouses[Traphouse].keyholders) do
+        if data.citizenid == CitizenId then
+            retval = true
+            break
+        end
+    end
+    return retval
+end
+
+function AddKeyHolder(CitizenId, Traphouse)
+    if #Config.TrapHouses[Traphouse].keyholders <= 6 then
+        if not HasCitizenIdHasKey(CitizenId, Traphouse) then
+            if #Config.TrapHouses[Traphouse].keyholders == 0 then
+                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
+                    citizenid = CitizenId,
+                    owner = true,
+                }
+            else
+                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
+                    citizenid = CitizenId,
+                    owner = false,
+                }
+            end
+            QBCore.Functions.Notify(Lang:t('success.added', {value = CitizenId}))
+        else
+            QBCore.Functions.Notify(Lang:t('error.p_have_keys', {value = CitizenId}))
+        end
+    else
+        QBCore.Functions.Notify(Lang:t("error.up_to_6"))
+    end
+    IsKeyHolder = HasKey(CitizenId)
+    IsHouseOwner = IsOwner(CitizenId)
+end
+
+-- Events
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    PlayerData = QBCore.Functions.GetPlayerData()
+    QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
+        Config.TrapHouses = trappies
+    end)
+end)
+
+RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function(code)
     if ClosestTraphouse ~= nil then
         if InTraphouseRange then
             local data = Config.TrapHouses[ClosestTraphouse]
@@ -203,6 +262,45 @@ AddEventHandler('qb-traphouse:client:EnterTraphouse', function(code)
         end
     end
 end)
+
+RegisterNetEvent('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
+    QBCore.Functions.Progressbar("takeover_traphouse", Lang:t("info.taking_over"), math.random(1000, 3000), false, true, {
+        disableMovement = true,
+        disableCarMovement = true,
+        disableMouse = false,
+        disableCombat = true,
+    }, {}, {}, {}, function() -- Done
+        TriggerServerEvent('qb-traphouse:server:AddHouseKeyHolder', PlayerData.citizenid, TraphouseId, true)
+    end, function()
+        QBCore.Functions.Notify(Lang:t("error.cancelled"), "error")
+    end)
+end)
+
+RegisterNetEvent('qb-traphouse:client:target:ViewInventory', function (data)
+    local TraphouseInventory = {}
+    TraphouseInventory.label = "traphouse_"..CurrentTraphouse
+    TraphouseInventory.items = data.traphouseData.inventory
+    TraphouseInventory.slots = 2
+    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
+end)
+
+RegisterNetEvent('qb-traphouse:client:target:TakeOver', function ()
+    TriggerServerEvent('qb-traphouse:server:TakeoverHouse', CurrentTraphouse)
+end)
+
+RegisterNetEvent('qb-traphouse:client:target:TakeMoney', function ()
+    TriggerServerEvent("qb-traphouse:server:TakeMoney", CurrentTraphouse)
+end)
+
+RegisterNetEvent('qb-traphouse:client:target:SeePinCode', function (data)
+    QBCore.Functions.Notify(Lang:t('info.pin_code', { value = data.traphouseData.pincode }))
+end)
+
+RegisterNetEvent('qb-traphouse:client:target:ExitTraphouse', function (data)
+    LeaveTraphouse(data.traphouseID, Config.TrapHouses[data.traphouseID])
+end)
+
+-- NUI
 
 RegisterNUICallback('PinpadClose', function()
     SetNuiFocus(false, false)
@@ -221,17 +319,31 @@ RegisterNUICallback('EnterPincode', function(d)
     end
 end)
 
-local CanRob = true
+-- Threads
 
-function RobTimeout(timeout)
-    SetTimeout(timeout, function()
-        CanRob = true
-    end)
-end
+CreateThread(function()
+    if Config.UseTarget then
+        SetTraphouseEntranceTargets()
+    end
+    while true do
+        if LocalPlayer.state.isLoggedIn then
+            SetClosestTraphouse()
+        end
+        Wait(1000)
+    end
+end)
 
-local RobbingTime = 3
+CreateThread(function()
+    Wait(1000)
+    if QBCore.Functions.GetPlayerData() ~= nil then
+        PlayerData = QBCore.Functions.GetPlayerData()
+        QBCore.Functions.TriggerCallback('qb-traphouse:server:GetTraphousesData', function(trappies)
+            Config.TrapHouses = trappies
+        end)
+    end
+end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local aiming, targetPed = GetEntityPlayerIsFreeAimingAt(PlayerId(-1))
         if targetPed ~= 0 and not IsPedAPlayer(targetPed) then
@@ -250,13 +362,13 @@ Citizen.CreateThread(function()
                                 if IsPedInAnyVehicle(targetPed) then
                                     TaskLeaveVehicle(targetPed, GetVehiclePedIsIn(targetPed), 1)
                                 end
-                                Citizen.Wait(500)
+                                Wait(500)
                                 InDistance = true
 
                                 local dict = 'random@mugging3'
                                 RequestAnimDict(dict)
                                 while not HasAnimDictLoaded(dict) do
-                                    Citizen.Wait(10)
+                                    Wait(10)
                                 end
 
                                 SetEveryoneIgnorePlayer(PlayerId(), true)
@@ -266,7 +378,7 @@ Citizen.CreateThread(function()
                                 TaskPlayAnim(targetPed, dict, 'handsup_standing_base', 2.0, -2, 15.0, 1, 0, 0, 0, 0)
                                 for i = 1, RobbingTime / 2, 1 do
                                     PlayAmbientSpeech1(targetPed, "GUN_BEG", "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
-                                    Citizen.Wait(2000)
+                                    Wait(2000)
                                 end
                                 FreezeEntityPosition(targetPed, true)
                                 IsRobbingNPC = true
@@ -296,14 +408,14 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                Citizen.Wait(1000)
+                Wait(1000)
             end
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 
         local ped = PlayerPedId()
@@ -425,128 +537,13 @@ Citizen.CreateThread(function()
                 end
             end
         else
-            Citizen.Wait(2000)
+            Wait(2000)
         end
-
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:ViewInventory', function (data)
-    local TraphouseInventory = {}
-    TraphouseInventory.label = "traphouse_"..CurrentTraphouse
-    TraphouseInventory.items = data.traphouseData.inventory
-    TraphouseInventory.slots = 2
-    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
-end)
-
-RegisterNetEvent('qb-traphouse:client:target:TakeOver', function ()
-    TriggerServerEvent('qb-traphouse:server:TakeoverHouse', CurrentTraphouse)
-end)
-
-RegisterNetEvent('qb-traphouse:client:target:TakeMoney', function ()
-    TriggerServerEvent("qb-traphouse:server:TakeMoney", CurrentTraphouse)
-end)
-
-RegisterNetEvent('qb-traphouse:client:target:SeePinCode', function (data)
-    QBCore.Functions.Notify(Lang:t('info.pin_code', { value = data.traphouseData.pincode }))
-end)
-
-RegisterNetEvent('qb-traphouse:client:target:ExitTraphouse', function (data)
-    LeaveTraphouse(data.traphouseID, Config.TrapHouses[data.traphouseID])
-end)
-
-function EnterTraphouse(data)
-    local coords = { x = data.coords["enter"].x, y = data.coords["enter"].y, z= data.coords["enter"].z - Config.MinZOffset}
-    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-    data = exports['qb-interior']:CreateTrevorsShell(coords)
-    TraphouseObj = data[1]
-    POIOffsets = data[2]
-    CurrentTraphouse = ClosestTraphouse
-    InsideTraphouse = true
-    TriggerEvent('qb-weathersync:client:DisableSync')
-    FreezeEntityPosition(TraphouseObj, true)
-end
-
-function LeaveTraphouse(k, data)
-    local ped = PlayerPedId()
-    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-    DoScreenFadeOut(250)
-    Citizen.Wait(250)
-    exports['qb-interior']:DespawnInterior(TraphouseObj, function()
-        TriggerEvent('qb-weathersync:client:EnableSync')
-        DoScreenFadeIn(250)
-        SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
-        SetEntityHeading(ped, 107.71)
-        TraphouseObj = nil
-        POIOffsets = nil
-        CurrentTraphouse = nil
-        InsideTraphouse = false
-    end)
-
-    if Config.UseTarget then
-        exports['qb-target']:RemoveZone('traphouseInteraction' .. k)
-        data.polyzoneBoxData['interaction'].created = false
-
-        exports['qb-target']:RemoveZone('traphouseExit' .. k)
-        data.polyzoneBoxData['exit'].created = false
-    end
-end
-
-RegisterNetEvent('qb-traphouse:client:TakeoverHouse')
-AddEventHandler('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
-    local ped = PlayerPedId()
-
-    QBCore.Functions.Progressbar("takeover_traphouse", Lang:t("info.taking_over"), math.random(1000, 3000), false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {}, {}, {}, function() -- Done
-        TriggerServerEvent('qb-traphouse:server:AddHouseKeyHolder', PlayerData.citizenid, TraphouseId, true)
-    end, function()
-        QBCore.Functions.Notify(Lang:t("error.cancelled"), "error")
-    end)
-end)
-
-function HasCitizenIdHasKey(CitizenId, Traphouse)
-    local retval = false
-    for _, data in pairs(Config.TrapHouses[Traphouse].keyholders) do
-        if data.citizenid == CitizenId then
-            retval = true
-            break
-        end
-    end
-    return retval
-end
-
-function AddKeyHolder(CitizenId, Traphouse)
-    if #Config.TrapHouses[Traphouse].keyholders <= 6 then
-        if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-            if #Config.TrapHouses[Traphouse].keyholders == 0 then
-                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                    citizenid = CitizenId,
-                    owner = true,
-                }
-            else
-                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                    citizenid = CitizenId,
-                    owner = false,
-                }
-            end
-            QBCore.Functions.Notify(Lang:t('success.added', {value = CitizenId}))
-        else
-            QBCore.Functions.Notify(Lang:t('error.p_have_keys', {value = CitizenId}))
-        end
-    else
-        QBCore.Functions.Notify(Lang:t("error.up_to_6"))
-    end
-    IsKeyHolder = HasKey(CitizenId)
-    IsHouseOwner = IsOwner(CitizenId)
-end
-
-RegisterNetEvent('qb-traphouse:client:SyncData')
-AddEventHandler('qb-traphouse:client:SyncData', function(k, data)
+RegisterNetEvent('qb-traphouse:client:SyncData', function(k, data)
     Config.TrapHouses[k] = data
     IsKeyHolder = HasKey(PlayerData.citizenid)
     IsHouseOwner = IsOwner(PlayerData.citizenid)
