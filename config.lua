@@ -2,7 +2,7 @@ Config = Config or {}
 
 -- **** IMPORTANT ****
 -- UseTarget should only be set to true when using qb-target
-Config.UseTarget = false
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
 
 Config.MinZOffset = 40
 Config.TakeoverPrice = 5000

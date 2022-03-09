@@ -45,7 +45,7 @@ local function SetTraphouseEntranceTargets()
             if traphouse and traphouse.coords and traphouse.coords['enter'] then
                 RegisterTraphouseEntranceTarget(id, traphouse)
             else
-                print('traphouse ' .. key .. ' does not have entrance coords')
+                print('traphouse ' .. id .. ' does not have entrance coords')
             end
         end
     else
@@ -92,26 +92,6 @@ local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
     Config.TrapHouses[traphouseID].polyzoneBoxData['exit'].created = true
 end
 
-local function SetClosestTraphouse()
-    local pos = GetEntityCoords(PlayerPedId(), true)
-    local current = nil
-    local dist = nil
-    for id, traphouse in pairs(Config.TrapHouses) do
-        if current ~= nil then
-            if #(pos - Config.TrapHouses[id].coords.enter) < dist then
-                current = id
-                dist = #(pos - Config.TrapHouses[id].coords.enter)
-            end
-        else
-            dist = #(pos - Config.TrapHouses[id].coords.enter)
-            current = id
-        end
-    end
-    ClosestTraphouse = current
-    IsKeyHolder = HasKey(PlayerData.citizenid)
-    IsHouseOwner = IsOwner(PlayerData.citizenid)
-end
-
 local function HasKey(CitizenId)
     local haskey = false
     if ClosestTraphouse ~= nil then
@@ -142,6 +122,26 @@ local function IsOwner(CitizenId)
         end
     end
     return retval
+end
+
+local function SetClosestTraphouse()
+    local pos = GetEntityCoords(PlayerPedId(), true)
+    local current = nil
+    local dist = nil
+    for id, traphouse in pairs(Config.TrapHouses) do
+        if current ~= nil then
+            if #(pos - Config.TrapHouses[id].coords.enter) < dist then
+                current = id
+                dist = #(pos - Config.TrapHouses[id].coords.enter)
+            end
+        else
+            dist = #(pos - Config.TrapHouses[id].coords.enter)
+            current = id
+        end
+    end
+    ClosestTraphouse = current
+    IsKeyHolder = HasKey(PlayerData.citizenid)
+    IsHouseOwner = IsOwner(PlayerData.citizenid)
 end
 
 local function DrawText3Ds(x, y, z, text)
