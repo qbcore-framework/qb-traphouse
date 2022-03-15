@@ -7,7 +7,7 @@ local Translations = {
         p_have_keys = "%{value} This Person Already Has Keys",
         not_owner = "You Do Not Own A Traphouse Or Are Not The Owner",
         not_online = "This Person Is Not In The City",
-        no_money = "There issent any money in the cupboard",
+        no_money = "There isn't any money in the cupboard",
         incorrect_code = "This Code Is Incorrect",
         up_to_6 = "You Can Give Up To 6 People Access To The Trap House!",
         cancelled = "Acquisitions Canceled",
@@ -29,6 +29,7 @@ local Translations = {
         leave = "~b~E~w~ - Leave Traphouse",
     },
     targetInfo = {
+        options = "Traphouse Options",
         enter = "Enter Traphouse",
         give_keys = "Give Keys of Traphouse",
         pincode = "Traphouse Pincode: %{value}",
@@ -40,6 +41,7 @@ local Translations = {
         inventory = "View Inventory",
         take_over = "Take Over ($5000)",
         leave = "Leave Traphouse",
+        close_menu = "⬅ Close Menu",
     }
 }
 

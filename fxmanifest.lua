@@ -11,7 +11,13 @@ shared_scripts {
     '@qb-core/shared/locale.lua',
 	'locales/*.lua'
 }
-client_script 'client/*.lua'
+client_script {
+    'client/*.lua',
+    '@PolyZone/client.lua',
+	'@PolyZone/BoxZone.lua',
+	'@PolyZone/CircleZone.lua',
+}
+
 server_script 'server/*.lua'
 
 server_exports {

@@ -137,10 +137,6 @@ function CanItemBeSaled(item)
     return retval
 end
 
-QBCore.Functions.CreateCallback('qb-traphouse:server:GetTraphousesData', function(source, cb)
-    cb(Config.TrapHouses)
-end)
-
 -- events
 
 RegisterServerEvent('qb-traphouse:server:TakeoverHouse', function(Traphouse)
@@ -222,11 +218,6 @@ RegisterServerEvent('qb-traphouse:server:RobNpc', function(Traphouse)
 end)
 
 -- Commands
-
-QBCore.Commands.Add("entertraphouse", Lang:t("info.enter"), {}, false, function(source, args)
-    local src = source
-    TriggerClientEvent('qb-traphouse:client:EnterTraphouse', src)
-end)
 
 QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help = "Player id"}}, true, function(source, args)
     local src = source
