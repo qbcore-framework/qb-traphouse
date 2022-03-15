@@ -66,8 +66,8 @@ local function RegisterTraphouseEntranceZone(traphouseID, traphouseData)
         isInsideEntranceTarget = isPointInside
     end)
 
-    Config.TrapHouses[traphouseID].polyzoneBoxData['enter'].created = true
-    Config.TrapHouses[traphouseID].polyzoneBoxData['enter'].zone = zone
+    boxData.created = true
+    boxData.zone = zone
 end
 
 local function SetTraphouseEntranceTargets()
@@ -108,14 +108,55 @@ local function RegisterTraphouseInteractionZone(traphouseID, traphouseData)
         isInsideInteractionTarget = isPointInside
     end)
 
-    Config.TrapHouses[traphouseID].polyzoneBoxData['interaction'].created = true
-    Config.TrapHouses[traphouseID].polyzoneBoxData['interaction'].zone = zone
+    boxData.created = true
+    boxData.zone = zone
 end
 
-local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData, options)
+local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
+    
+    local options = nil
+    if IsKeyHolder then
+        options = {
+            {
+                type = "client",
+                event = "qb-traphouse:client:target:ViewInventory",
+                label = Lang:t("targetInfo.inventory"),
+                traphouseData = traphouseData
+            },
+            {
+                type = "client",
+                event = "qb-traphouse:client:target:TakeMoney",
+                label = Lang:t('targetInfo.take_cash', {value = traphouseData.money}),
+            },
+        }
+
+        if IsHouseOwner then
+            options[#options+1] = {
+                type = "client",
+                event = "qb-traphouse:client:target:ExitTraphouse",
+                label = Lang:t("targetInfo.leave"),
+                traphouseData = traphouseData
+            }
+            options[#options+1] = {
+                type = "client",
+                event = "qb-traphouse:client:target:SeePinCode",
+                label = Lang:t("targetInfo.pin_code_see"),
+                traphouseData = traphouseData
+            }
+        end
+    else
+        options = {
+            {
+                type = "client",
+                event = "qb-traphouse:client:target:TakeOver",
+                label = Lang:t("targetInfo.take_over"),
+            },
+        }
+    end
+
     exports['qb-target']:AddBoxZone(boxName, coords, boxData.length, boxData.width, {
         name = boxName,
         heading = boxData.heading,
@@ -125,7 +166,7 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData, op
         distance = boxData.distance
     })
 
-    Config.TrapHouses[traphouseID].polyzoneBoxData['interaction'].created = true
+    boxData.created = true
 end
 
 local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
@@ -151,8 +192,8 @@ local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
         isInsideExitTarget = isPointInside
     end)
 
-    Config.TrapHouses[traphouseID].polyzoneBoxData['exit'].created = true
-    Config.TrapHouses[traphouseID].polyzoneBoxData['exit'].zone = zone
+    boxData.created = true
+    boxData.zone = zone
 end
 
 local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
@@ -175,7 +216,7 @@ local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
         distance = boxData.distance
     })
 
-    Config.TrapHouses[traphouseID].polyzoneBoxData['exit'].created = true
+    boxData.created = true
 end
 
 local function OpenHeaderMenu(data)
@@ -301,7 +342,7 @@ local function LeaveTraphouse(k, data)
     local ped = PlayerPedId()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     exports['qb-interior']:DespawnInterior(TraphouseObj, function()
         TriggerEvent('qb-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
@@ -319,7 +360,7 @@ local function LeaveTraphouse(k, data)
 
         exports['qb-target']:RemoveZone('traphouseExit' .. k)
         data.polyzoneBoxData['exit'].created = false
-    else 
+    else
         if Config.TrapHouses[k] and Config.TrapHouses[k].polyzoneBoxData['interaction'] and Config.TrapHouses[k].polyzoneBoxData['interaction'].zone then
             Config.TrapHouses[k].polyzoneBoxData['interaction'].zone:destroy()
             Config.TrapHouses[k].polyzoneBoxData['interaction'].created = false
@@ -331,6 +372,9 @@ local function LeaveTraphouse(k, data)
             Config.TrapHouses[k].polyzoneBoxData['exit'].created = false
             Config.TrapHouses[k].polyzoneBoxData['exit'].zone = nil
         end
+
+        isInsideExitTarget = false
+        isInsideInteractionTarget = false
     end
 end
 
@@ -447,6 +491,8 @@ RegisterNetEvent('qb-traphouse:client:SyncData', function(k, data)
             Config.TrapHouses[k].polyzoneBoxData['interaction'].created = false
             Config.TrapHouses[k].polyzoneBoxData['interaction'].zone = nil
         end
+
+        isInsideInteractionTarget = false
     end
 end)
 
@@ -587,45 +633,7 @@ CreateThread(function ()
 
                 if not data.polyzoneBoxData['interaction'].created then
                     if Config.UseTarget then
-                        local options = nil
-                        if IsKeyHolder then
-                            options = {
-                                {
-                                    type = "client",
-                                    event = "qb-traphouse:client:target:ViewInventory",
-                                    label = Lang:t("targetInfo.inventory"),
-                                    traphouseData = data
-                                },
-                                {
-                                    type = "client",
-                                    event = "qb-traphouse:client:target:TakeMoney",
-                                    label = Lang:t('targetInfo.take_cash', {value = data.money}),
-                                },
-                            }
-
-                            if IsHouseOwner then
-                                options[#options+1] = {
-                                    type = "client",
-                                    label = Lang:t("targetInfo.LeaveTraphouse"),
-                                }
-                                options[#options+1] = {
-                                    type = "client",
-                                    event = "qb-traphouse:client:target:SeePinCode",
-                                    label = Lang:t("targetInfo.pin_code_see"),
-                                    traphouseData = data
-                                }
-                            end
-                        else
-                            options = {
-                                {
-                                    type = "client",
-                                    event = "qb-traphouse:client:target:TakeOver",
-                                    label = Lang:t("targetInfo.take_over"),
-                                },
-                            }
-                        end
-
-                        RegisterTraphouseInteractionTarget(CurrentTraphouse, data, options)
+                        RegisterTraphouseInteractionTarget(CurrentTraphouse, data)
                     else
                         RegisterTraphouseInteractionZone(CurrentTraphouse, data)
                     end
