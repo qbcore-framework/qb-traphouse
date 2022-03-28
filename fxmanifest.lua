@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'QB-Traphouse'
-version '1.0.0'
+version '2.0.0'
 
 ui_page 'html/index.html'
 
@@ -11,8 +11,14 @@ shared_scripts {
     '@qb-core/shared/locale.lua',
 	'locales/*.lua'
 }
-client_script 'client/main.lua'
-server_script 'server/main.lua'
+client_script {
+    'client/*.lua',
+    '@PolyZone/client.lua',
+	'@PolyZone/BoxZone.lua',
+	'@PolyZone/CircleZone.lua',
+}
+
+server_script 'server/*.lua'
 
 server_exports {
     'AddHouseItem',

@@ -1,12 +1,44 @@
 Config = Config or {}
 
+-- **** IMPORTANT ****
+-- UseTarget should only be set to true when using qb-target
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
+
 Config.MinZOffset = 40
 Config.TakeoverPrice = 5000
 Config.TrapHouses = {
     [1] = {
         coords = {
-            ["enter"] = vector3(-1202.13, -1308.48, 4.91),
-            ["interaction"] = vector3(-1207.42, -1311.83, -32.66),
+            ["enter"] = vector3(-1202.21, -1308.48, 4.92),
+            ["interaction"] = vector3(-1207.63, -1311.75, -32.65),
+        },
+        polyzoneBoxData = {
+            ["enter"] = {
+                heading = 290,
+                minZ = 4.0,
+                maxZ = 6.0,
+                debug = false,
+                length = 1,
+                width = 1,
+                distance = 2.0,
+                created = false
+            },
+            ["interaction"] = {
+                heading = 180,
+                debug = false,
+                length = 1,
+                width = 1,
+                distance = 1.0,
+                created = false
+            },
+            ["exit"] = {
+                heading = 180,
+                debug = false,
+                length = 1,
+                width = 1,
+                distance = 1.0,
+                created = false
+            }
         },
         keyholders = {},
         pincode = 1234,

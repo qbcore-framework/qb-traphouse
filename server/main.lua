@@ -1,56 +1,9 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-RegisterServerEvent('qb-traphouse:server:TakeoverHouse')
-AddEventHandler('qb-traphouse:server:TakeoverHouse', function(Traphouse)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local CitizenId = Player.PlayerData.citizenid
 
-    if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-        if Player.Functions.RemoveMoney('cash', Config.TakeoverPrice) then
-            TriggerClientEvent('qb-traphouse:client:TakeoverHouse', src, Traphouse)
-        else
-            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
-        end
-    end
-end)
+-- Functions
 
-RegisterServerEvent('qb-traphouse:server:AddHouseKeyHolder')
-AddEventHandler('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-
-    if Config.TrapHouses[TraphouseId] ~= nil then
-        if IsOwner then
-            Config.TrapHouses[TraphouseId].keyholders = {}
-            Config.TrapHouses[TraphouseId].pincode = math.random(1111, 4444)
-        end
-
-        if Config.TrapHouses[TraphouseId].keyholders == nil then
-            Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
-                citizenid = CitizenId,
-                owner = IsOwner,
-            }
-            TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
-        else
-            if #Config.TrapHouses[TraphouseId].keyholders + 1 <= 6 then
-                if not HasCitizenIdHasKey(CitizenId, TraphouseId) then
-                    Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
-                        citizenid = CitizenId,
-                        owner = IsOwner,
-                    }
-                    TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
-                end
-            else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_slots"))
-            end
-        end
-    else
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.occured"))
-    end
-end)
-
-function HasCitizenIdHasKey(CitizenId, Traphouse)
+local function HasCitizenIdHasKey(CitizenId, Traphouse)
     local retval = false
     if Config.TrapHouses[Traphouse].keyholders ~= nil and next(Config.TrapHouses[Traphouse].keyholders) ~= nil then
         for _, data in pairs(Config.TrapHouses[Traphouse].keyholders) do
@@ -77,7 +30,7 @@ function AddKeyHolder(CitizenId, Traphouse, IsOwner)
     end
 end
 
-function HasTraphouseAndOwner(CitizenId)
+local function HasTraphouseAndOwner(CitizenId)
     local retval = nil
     for Traphouse,_ in pairs(Config.TrapHouses) do
         for k, v in pairs(Config.TrapHouses[Traphouse].keyholders) do
@@ -91,77 +44,7 @@ function HasTraphouseAndOwner(CitizenId)
     return retval
 end
 
-QBCore.Commands.Add("entertraphouse", Lang:t("info.enter"), {}, false, function(source, args)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-
-    TriggerClientEvent('qb-traphouse:client:EnterTraphouse', src)
-end)
-
-QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help = "Player id"}}, true, function(source, args)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local TargetId = tonumber(args[1])
-    local TargetData = QBCore.Functions.GetPlayer(TargetId)
-    local IsOwner = false
-    local Traphouse = HasTraphouseAndOwner(Player.PlayerData.citizenid)
-
-    if TargetData ~= nil then
-        if Traphouse ~= nil then
-            if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
-                if Config.TrapHouses[Traphouse] ~= nil then
-                    if IsOwner then
-                        Config.TrapHouses[Traphouse].keyholders = {}
-                        Config.TrapHouses[Traphouse].pincode = math.random(1111, 4444)
-                    end
-
-                    if Config.TrapHouses[Traphouse].keyholders == nil then
-                        Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                            citizenid = TargetData.PlayerData.citizenid,
-                            owner = IsOwner,
-                        }
-                        TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
-                    else
-                        if #Config.TrapHouses[Traphouse].keyholders + 1 <= 6 then
-                            if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
-                                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                                    citizenid = TargetData.PlayerData.citizenid,
-                                    owner = IsOwner,
-                                }
-                                TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
-                            end
-                        else
-                            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_slots"))
-                        end
-                    end
-                else
-                    TriggerClientEvent('QBCore:Notify', src, Lang:t("error.occured"))
-                end
-            else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.have_keys"), 'error')
-            end
-        else
-            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_owner"), 'error')
-        end
-    else
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_online"), 'error')
-    end
-end)
-
-RegisterServerEvent('qb-traphouse:server:TakeMoney')
-AddEventHandler('qb-traphouse:server:TakeMoney', function(TraphouseId)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    if Config.TrapHouses[TraphouseId].money ~= 0 then
-        Player.Functions.AddMoney('cash', Config.TrapHouses[TraphouseId].money)
-        Config.TrapHouses[TraphouseId].money = 0
-        TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
-    else
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_money"), 'error')
-    end
-end)
-
-function SellTimeout(traphouseId, slot, itemName, amount, info)
+local function SellTimeout(traphouseId, slot, itemName, amount, info)
     Citizen.CreateThread(function()
         if itemName == "markedbills" then
             SetTimeout(math.random(1000, 5000), function()
@@ -254,8 +137,69 @@ function CanItemBeSaled(item)
     return retval
 end
 
-RegisterServerEvent('qb-traphouse:server:RobNpc')
-AddEventHandler('qb-traphouse:server:RobNpc', function(Traphouse)
+-- events
+
+RegisterServerEvent('qb-traphouse:server:TakeoverHouse', function(Traphouse)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local CitizenId = Player.PlayerData.citizenid
+
+    if not HasCitizenIdHasKey(CitizenId, Traphouse) then
+        if Player.Functions.RemoveMoney('cash', Config.TakeoverPrice) then
+            TriggerClientEvent('qb-traphouse:client:TakeoverHouse', src, Traphouse)
+        else
+            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
+        end
+    end
+end)
+
+
+RegisterServerEvent('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
+    local src = source
+
+    if Config.TrapHouses[TraphouseId] ~= nil then
+        if IsOwner then
+            Config.TrapHouses[TraphouseId].keyholders = {}
+            Config.TrapHouses[TraphouseId].pincode = math.random(1111, 4444)
+        end
+
+        if Config.TrapHouses[TraphouseId].keyholders == nil then
+            Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
+                citizenid = CitizenId,
+                owner = IsOwner,
+            }
+            TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+        else
+            if #Config.TrapHouses[TraphouseId].keyholders + 1 <= 6 then
+                if not HasCitizenIdHasKey(CitizenId, TraphouseId) then
+                    Config.TrapHouses[TraphouseId].keyholders[#Config.TrapHouses[TraphouseId].keyholders+1] = {
+                        citizenid = CitizenId,
+                        owner = IsOwner,
+                    }
+                    TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+                end
+            else
+                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_slots"))
+            end
+        end
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.occured"))
+    end
+end)
+
+RegisterServerEvent('qb-traphouse:server:TakeMoney', function(TraphouseId)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if Config.TrapHouses[TraphouseId].money ~= 0 then
+        Player.Functions.AddMoney('cash', Config.TrapHouses[TraphouseId].money)
+        Config.TrapHouses[TraphouseId].money = 0
+        TriggerClientEvent('qb-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_money"), 'error')
+    end
+end)
+
+RegisterServerEvent('qb-traphouse:server:RobNpc', function(Traphouse)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local Chance = math.random(1, 10)
@@ -273,6 +217,59 @@ AddEventHandler('qb-traphouse:server:RobNpc', function(Traphouse)
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-traphouse:server:GetTraphousesData', function(source, cb)
-    cb(Config.TrapHouses)
+-- Commands
+
+QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help = "Player id"}}, true, function(source, args)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local TargetId = tonumber(args[1])
+    local TargetData = QBCore.Functions.GetPlayer(TargetId)
+    local IsOwner = false
+    local Traphouse = HasTraphouseAndOwner(Player.PlayerData.citizenid)
+
+    if TargetData ~= nil then
+        if Traphouse ~= nil then
+            if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
+                if Config.TrapHouses[Traphouse] ~= nil then
+                    if IsOwner then
+                        Config.TrapHouses[Traphouse].keyholders = {}
+                        Config.TrapHouses[Traphouse].pincode = math.random(1111, 4444)
+                    end
+
+                    if Config.TrapHouses[Traphouse].keyholders == nil then
+                        Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
+                            citizenid = TargetData.PlayerData.citizenid,
+                            owner = IsOwner,
+                        }
+                        TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
+                    else
+                        if #Config.TrapHouses[Traphouse].keyholders + 1 <= 6 then
+                            if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
+                                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
+                                    citizenid = TargetData.PlayerData.citizenid,
+                                    owner = IsOwner,
+                                }
+                                TriggerClientEvent('qb-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
+                            end
+                        else
+                            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.no_slots"))
+                        end
+                    end
+                else
+                    TriggerClientEvent('QBCore:Notify', src, Lang:t("error.occured"))
+                end
+            else
+                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.have_keys"), 'error')
+            end
+        else
+            TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_owner"), 'error')
+        end
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_online"), 'error')
+    end
 end)
+
+
+
+
+
