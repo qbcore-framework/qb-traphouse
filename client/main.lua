@@ -136,12 +136,6 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
         if IsHouseOwner then
             options[#options+1] = {
                 type = "client",
-                event = "qb-traphouse:client:target:ExitTraphouse",
-                label = Lang:t("targetInfo.leave"),
-                traphouseData = traphouseData
-            }
-            options[#options+1] = {
-                type = "client",
                 event = "qb-traphouse:client:target:SeePinCode",
                 label = Lang:t("targetInfo.pin_code_see"),
                 traphouseData = traphouseData
