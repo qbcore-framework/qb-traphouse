@@ -88,7 +88,7 @@ local function RegisterTraphouseInteractionZone(traphouseID, traphouseData)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
-    
+
     local zone = BoxZone:Create(coords, boxData.length, boxData.width, {
         name = boxName,
         heading = boxData.heading,
@@ -116,7 +116,7 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
-    
+
     local options = nil
     if IsKeyHolder then
         options = {
@@ -167,7 +167,7 @@ local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
     local coords = coords
     local boxName = 'traphouseExit' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['exit']
-    
+
     local zone = BoxZone:Create(coords, boxData.length, boxData.width, {
         name = boxName,
         heading = boxData.heading,
@@ -490,28 +490,31 @@ RegisterNetEvent('qb-traphouse:client:SyncData', function(k, data)
     end
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function () 
+RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function ()
     TriggerEvent('qb-menu:client:closeMenu')
 end)
 
 
 -- NUI
 
-RegisterNUICallback('PinpadClose', function()
+RegisterNUICallback('PinpadClose', function(_, cb)
     SetNuiFocus(false, false)
+    cb('ok')
 end)
 
-RegisterNUICallback('ErrorMessage', function(data)
+RegisterNUICallback('ErrorMessage', function(data, cb)
     QBCore.Functions.Notify(data.message, 'error')
+    cb('ok')
 end)
 
-RegisterNUICallback('EnterPincode', function(d)
+RegisterNUICallback('EnterPincode', function(d, cb)
     local data = Config.TrapHouses[ClosestTraphouse]
     if tonumber(d.pin) == data.pincode then
         EnterTraphouse(data)
     else
         QBCore.Functions.Notify(Lang:t("error.incorrect_code"), 'error')
     end
+    cb('ok')
 end)
 
 -- Threads
