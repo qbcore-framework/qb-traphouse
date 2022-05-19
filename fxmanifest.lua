@@ -20,13 +20,6 @@ client_script {
 
 server_script 'server/*.lua'
 
-server_exports {
-    'AddHouseItem',
-    'RemoveHouseItem',
-    'GetInventoryData',
-    'CanItemBeSaled'
-}
-
 files {
     'html/*'
 }

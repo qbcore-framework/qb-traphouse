@@ -7,7 +7,6 @@ local TraphouseObj = {}
 local POIOffsets = nil
 local IsKeyHolder = false
 local IsHouseOwner = false
-local InTraphouseRange = false
 local CanRob = true
 local IsRobbingNPC = false
 local RobbingTime = 3
@@ -116,8 +115,14 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
-
-    local options = nil
+    
+    local options = {
+        {
+            type = "client",
+            event = "qb-traphouse:client:target:TakeOver",
+            label = Lang:t("targetInfo.take_over"),
+        },
+    }
     if IsKeyHolder then
         options = {
             {
@@ -141,14 +146,6 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
                 traphouseData = traphouseData
             }
         end
-    else
-        options = {
-            {
-                type = "client",
-                event = "qb-traphouse:client:target:TakeOver",
-                label = Lang:t("targetInfo.take_over"),
-            },
-        }
     end
 
     exports['qb-target']:AddBoxZone(boxName, coords, boxData.length, boxData.width, {
@@ -164,7 +161,6 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
 end
 
 local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
-    local coords = coords
     local boxName = 'traphouseExit' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['exit']
 
@@ -191,7 +187,6 @@ local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
 end
 
 local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
-    local coords = coords
     local boxName = 'traphouseExit' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['exit']
     exports['qb-target']:AddBoxZone(boxName, coords, boxData.length, boxData.width, {
@@ -304,7 +299,7 @@ local function SetClosestTraphouse()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
-    for id, traphouse in pairs(Config.TrapHouses) do
+    for id, _ in pairs(Config.TrapHouses) do
         if current ~= nil then
             if #(pos - Config.TrapHouses[id].coords.enter) < dist then
                 current = id
@@ -378,49 +373,13 @@ local function RobTimeout(timeout)
     end)
 end
 
-local function HasCitizenIdHasKey(CitizenId, Traphouse)
-    local retval = false
-    for _, data in pairs(Config.TrapHouses[Traphouse].keyholders) do
-        if data.citizenid == CitizenId then
-            retval = true
-            break
-        end
-    end
-    return retval
-end
-
-function AddKeyHolder(CitizenId, Traphouse)
-    if #Config.TrapHouses[Traphouse].keyholders <= 6 then
-        if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-            if #Config.TrapHouses[Traphouse].keyholders == 0 then
-                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                    citizenid = CitizenId,
-                    owner = true,
-                }
-            else
-                Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                    citizenid = CitizenId,
-                    owner = false,
-                }
-            end
-            QBCore.Functions.Notify(Lang:t('success.added', {value = CitizenId}))
-        else
-            QBCore.Functions.Notify(Lang:t('error.p_have_keys', {value = CitizenId}))
-        end
-    else
-        QBCore.Functions.Notify(Lang:t("error.up_to_6"))
-    end
-    IsKeyHolder = HasKey(CitizenId)
-    IsHouseOwner = IsOwner(CitizenId)
-end
-
 -- Events
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerData = QBCore.Functions.GetPlayerData()
 end)
 
-RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function(code)
+RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function()
     if ClosestTraphouse ~= nil then
         local data = Config.TrapHouses[ClosestTraphouse]
         if not IsKeyHolder then
@@ -532,6 +491,7 @@ CreateThread(function()
                     if aiming then
                         local pcoords = GetEntityCoords(targetPed)
                         local peddist = #(pos - pcoords)
+                        local InDistance = false
                         if peddist < 4 then
                             InDistance = true
                             if not IsRobbingNPC and CanRob then
@@ -552,8 +512,8 @@ CreateThread(function()
                                 FreezeEntityPosition(targetPed, true)
                                 SetBlockingOfNonTemporaryEvents(targetPed, true)
                                 TaskPlayAnim(targetPed, dict, 'handsup_standing_base', 2.0, -2, 15.0, 1, 0, 0, 0, 0)
-                                for i = 1, RobbingTime / 2, 1 do
-                                    PlayAmbientSpeech1(targetPed, "GUN_BEG", "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
+                                for _ = 1, RobbingTime / 2, 1 do
+                                    PlayPedAmbientSpeechNative(targetPed, "GUN_BEG", "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
                                     Wait(2000)
                                 end
                                 FreezeEntityPosition(targetPed, true)
@@ -653,7 +613,7 @@ CreateThread(function ()
                 end
             end
         end
-        Wait(sleep)
+        Wait(wait)
     end
 
 end)
