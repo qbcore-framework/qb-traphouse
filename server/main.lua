@@ -16,20 +16,6 @@ local function HasCitizenIdHasKey(CitizenId, Traphouse)
     return retval
 end
 
-function AddKeyHolder(CitizenId, Traphouse, IsOwner)
-    if IsOwner then
-        Config.TrapHouses[Traphouse].keyholders = {}
-    end
-    if #Config.TrapHouses[Traphouse].keyholders <= 6 then
-        if not HasCitizenIdHasKey(CitizenId, Traphouse) then
-            Config.TrapHouses[Traphouse].keyholders[#Config.TrapHouses[Traphouse].keyholders+1] = {
-                citizenid = CitizenId,
-                owner = IsOwner,
-            }
-        end
-    end
-end
-
 local function HasTraphouseAndOwner(CitizenId)
     local retval = nil
     for Traphouse in pairs(Config.TrapHouses) do
@@ -74,7 +60,7 @@ local function SellTimeout(traphouseId, slot, itemName, amount, info)
     end
 end
 
-function AddHouseItem(traphouseId, slot, itemName, amount, info, source)
+function AddHouseItem(traphouseId, slot, itemName, amount, info)
     if itemsBusy then return end
     amount = tonumber(amount)
     traphouseId = tonumber(traphouseId)
@@ -271,3 +257,8 @@ QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help =
         TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_online"), 'error')
     end
 end)
+
+exports("AddHouseItem", AddHouseItem)
+exports("RemoveHouseItem", RemoveHouseItem)
+exports("GetInventoryData", GetInventoryData)
+exports("CanItemBeSaled", CanItemBeSaled)
