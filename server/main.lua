@@ -1,5 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-
+local itemsBusy = false
 
 -- Functions
 
@@ -18,7 +18,7 @@ end
 
 local function HasTraphouseAndOwner(CitizenId)
     local retval = nil
-    for Traphouse,_ in pairs(Config.TrapHouses) do
+    for Traphouse in pairs(Config.TrapHouses) do
         for _, v in pairs(Config.TrapHouses[Traphouse].keyholders) do
             if v.citizenid == CitizenId then
                 if v.owner then
@@ -31,34 +31,37 @@ local function HasTraphouseAndOwner(CitizenId)
 end
 
 local function SellTimeout(traphouseId, slot, itemName, amount, info)
-    Citizen.CreateThread(function()
-        if itemName == "markedbills" then
-            SetTimeout(math.random(1000, 5000), function()
+    if itemName == "markedbills" then
+        itemsBusy = true
+        SetTimeout(math.random(1000, 5000), function()
+            itemsBusy = false
+            if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
+                RemoveHouseItem(traphouseId, slot, itemName, 1)
+                Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + math.ceil(info.worth / 100 * 80)
+                TriggerClientEvent('qb-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
+            end
+        end)
+    else
+        itemsBusy = true
+        for _ = 1, amount, 1 do
+            local SellData = Config.AllowedItems[itemName]
+            SetTimeout(SellData.wait, function()
+                itemsBusy = false
                 if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
                     RemoveHouseItem(traphouseId, slot, itemName, 1)
-                    Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + math.ceil(info.worth / 100 * 80)
+                    Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + SellData.reward
                     TriggerClientEvent('qb-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
                 end
             end)
-        else
-            for _ = 1, amount, 1 do
-                local SellData = Config.AllowedItems[itemName]
-                SetTimeout(SellData.wait, function()
-                    if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
-                        RemoveHouseItem(traphouseId, slot, itemName, 1)
-                        Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + SellData.reward
-                        TriggerClientEvent('qb-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
-                    end
-                end)
-                if amount > 1 then
-                    Citizen.Wait(SellData.wait)
-                end
+            if amount > 1 then
+                Wait(SellData.wait)
             end
         end
-    end)
+    end
 end
 
-function AddHouseItem(traphouseId, slot, itemName, amount, info, _)
+function AddHouseItem(traphouseId, slot, itemName, amount, info)
+    if itemsBusy then return end
     amount = tonumber(amount)
     traphouseId = tonumber(traphouseId)
     if Config.TrapHouses[traphouseId].inventory[slot] ~= nil and Config.TrapHouses[traphouseId].inventory[slot].name == itemName then
