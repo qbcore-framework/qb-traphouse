@@ -31,7 +31,7 @@ local function HasTraphouseAndOwner(CitizenId)
 end
 
 local function SellTimeout(traphouseId, slot, itemName, amount, info)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         if itemName == "markedbills" then
             SetTimeout(math.random(1000, 5000), function()
                 if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
@@ -51,7 +51,7 @@ local function SellTimeout(traphouseId, slot, itemName, amount, info)
                     end
                 end)
                 if amount > 1 then
-                    Citizen.Wait(SellData.wait)
+                    Wait(SellData.wait)
                 end
             end
         end
