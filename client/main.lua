@@ -617,3 +617,36 @@ CreateThread(function ()
     end
 
 end)
+
+
+
+AddEventHandler('onResourceStart', function(resource)
+   if resource == GetCurrentResourceName() and Config.RandomPin == true then
+    Wait(1000)
+
+        QBCore.Functions.TriggerCallback('traphouse:server:getconfig', function(data)
+            if(data ~= nil) then 
+                Config.TrapHouses = data
+            else
+                print('Config sync has failed')
+            end
+        end)
+
+   end
+
+end)
+
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function ()
+    if(Config.RandomPin == true) then 
+        
+        QBCore.Functions.TriggerCallback('traphouse:server:getconfig', function(data)
+            if(data ~= nil) then 
+                Config.TrapHouses = data
+            else
+                print('Config sync has failed')
+            end
+        end)
+
+    end
+end)

@@ -255,6 +255,26 @@ QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help =
     end
 end)
 
+
+-- random pincode
+AddEventHandler('onResourceStart', function(resource)
+    if resource == GetCurrentResourceName() and Config.RandomPin == true then
+       Wait(100)
+       for i in pairs(Config.TrapHouses) do 
+         Config.TrapHouses[i].pincode = math.random(1111, 9999)
+         print('[qb-traphouse] Random pin is: ' ..Config.TrapHouses[i].pincode)
+       end
+    end
+ end)
+ 
+
+
+ QBCore.Functions.CreateCallback('traphouse:server:getconfig', function(source, cb)
+    if(Config.RandomPin == true) then 
+        cb(Config.TrapHouses)
+    end
+ end
+
 exports("AddHouseItem", AddHouseItem)
 exports("RemoveHouseItem", RemoveHouseItem)
 exports("GetInventoryData", GetInventoryData)

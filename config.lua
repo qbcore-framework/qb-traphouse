@@ -42,6 +42,7 @@ Config.TrapHouses = {
         },
         keyholders = {},
         pincode = 1234,
+        RandomPin = false, -- this will change the pincode on resource start and also print it to the server console 
         inventory = {},
         opened = false,
         takingover = false,
