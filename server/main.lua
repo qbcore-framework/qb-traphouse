@@ -258,7 +258,7 @@ end)
 
 -- random pincode
 AddEventHandler('onResourceStart', function(resource)
-    if resource == GetCurrentResourceName() and Config.randoPin == true then
+    if resource == GetCurrentResourceName() and Config.RandomPin == true then
        Wait(100)
        for i in pairs(Config.TrapHouses) do 
          Config.TrapHouses[i].pincode = math.random(1111, 9999)
@@ -267,15 +267,13 @@ AddEventHandler('onResourceStart', function(resource)
     end
  end)
  
- RegisterNetEvent("traphouse:server:reqpin")
- AddEventHandler("traphouse:server:reqpin", function ()
-    if(Config.randoPin == true) then 
-     local src = source
-     for i in pairs(Config.TrapHouses) do 
-         TriggerClientEvent('traphouse:client:setpin', src, i, Config.TrapHouses[i].pincode)
-       end
+
+
+ QBCore.Functions.CreateCallback('traphouse:server:getconfig', function(source, cb)
+    if(Config.RandomPin == true) then 
+        cb(Config.TrapHouses)
     end
- end)
+ end
 
 exports("AddHouseItem", AddHouseItem)
 exports("RemoveHouseItem", RemoveHouseItem)

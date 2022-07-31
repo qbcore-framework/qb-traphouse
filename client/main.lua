@@ -620,24 +620,33 @@ end)
 
 
 
-RegisterNetEvent('traphouse:client:setpin')
-AddEventHandler('traphouse:client:setpin', function (id, pin)
-    if(Config.randoPin == true) then 
-        Config.TrapHouses[id].pincode = pin
-    end
-end)
-
 AddEventHandler('onResourceStart', function(resource)
-   if resource == GetCurrentResourceName() and Config.randOpin == true then
-      Wait(100)
-      TriggerServerEvent('traphouse:server:reqpin')
-      --Do Stuff here
+   if resource == GetCurrentResourceName() and Config.RandomPin == true then
+    Wait(1000)
+
+        QBCore.Functions.TriggerCallback('traphouse:server:getconfig', function(data)
+            if(data ~= nil) then 
+                Config.TrapHouses = data
+            else
+                print('Config sync has failed')
+            end
+        end)
+
    end
+
 end)
 
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function ()
-    if(Config.randOpin == true) then 
-        TriggerServerEvent('traphouse:server:reqpin')
+    if(Config.RandomPin == true) then 
+        
+        QBCore.Functions.TriggerCallback('traphouse:server:getconfig', function(data)
+            if(data ~= nil) then 
+                Config.TrapHouses = data
+            else
+                print('Config sync has failed')
+            end
+        end)
+
     end
 end)
