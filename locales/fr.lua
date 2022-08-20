@@ -16,17 +16,32 @@ local Translations = {
         added = "%{value} a été ajoutée a ce lieu!",
     },
     info = {
+        enter = "Entrer dans la Traphouse",
+        give_keys = "Donner les clefs de la Traphouse",
+        pincode = "Code Pin Traphouse: %{value}",
+        taking_over = "Récupération",
+        pin_code_see = "Voir Code Pin",
+        pin_code = "Code Pin: %{value}",
+        multikeys = "/multikeys [id] - Pour donner les clefs",
+        take_cash = "Prendre l'argent ($%{value})",
+        inventory = "Voir inventaire",
+        take_over = "Récupération ($5000)",
+        leave = "Quitter",
+    },
+    targetInfo = {
+        options = "Options Traphouse",
         enter = "Entrer Traphouse",
         give_keys = "Donner les clefs de la Traphouse",
         pincode = "Code Pin Traphouse: %{value}",
         taking_over = "Récupération",
-        pin_code_see = "~b~G~w~ - Voir Code Pin",
+        pin_code_see = "Voir Code Pin",
         pin_code = "Code Pin: %{value}",
-        multikeys = "~b~/multikeys~w~ [id] - Pour donner les clefs",
-        take_cash = "~b~E~w~ - Prendre l'argent (~g~$%{value}~w~)",
-        inventory = "~b~H~w~ - Voir inventaire",
-        take_over = "~b~E~w~ - Récupération (~g~$5000~w~)",
-        leave = "~b~E~w~ - Quitter",
+        multikeys = "/multikeys [id] - Pour donner les clefs",
+        take_cash = "Prendre l'argent ($%{value})",
+        inventory = "Voir inventaire",
+        take_over = "Récupération ($5000)",
+        leave = "Quitter",
+        close_menu = "⬅ Close Menu",
     }
 }
 
@@ -34,4 +49,3 @@ local Translations = {
         phrases = Translations,
         warnOnMissing = true
     })
-
