@@ -7,15 +7,16 @@ version '2.0.0'
 ui_page 'html/index.html'
 
 shared_scripts {
-	'config.lua',
+    'config.lua',
     '@qb-core/shared/locale.lua',
-	'locales/en.lua'
+    'locales/en.lua',
+    'locales/*.lua'
 }
 client_script {
     'client/*.lua',
     '@PolyZone/client.lua',
-	'@PolyZone/BoxZone.lua',
-	'@PolyZone/CircleZone.lua',
+    '@PolyZone/BoxZone.lua',
+    '@PolyZone/CircleZone.lua',
 }
 
 server_script 'server/*.lua'
