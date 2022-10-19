@@ -27,6 +27,21 @@ local Translations = {
         inventory = "~b~H~w~ - Voir inventaire",
         take_over = "~b~E~w~ - Récupération (~g~$5000~w~)",
         leave = "~b~E~w~ - Quitter",
+    },
+    targetInfo = {
+        options = "Options de la Traphouse",
+        enter = "Entrer dans la Traphouse",
+        give_keys = "Donner les clés de la Traphouse",
+        pincode = "Code PIN : %{value}",
+        taking_over = "Reprise en cours",
+        pin_code_see = "Voir le code PIN",
+        pin_code = "Code PIN: %{value}",
+        multikeys = "Donner clé (use /multikey [id])",
+        take_cash = "Prendre l'argent (%{value}$)",
+        inventory = "Voir l'inventaire",
+        take_over = "Reprend la Traphouse (5000$)",
+        leave = "Quitter la Traphouse",
+        close_menu = "⬅ Fermer le Menu",
     }
 }
 
