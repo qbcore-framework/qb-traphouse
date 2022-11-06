@@ -411,7 +411,7 @@ RegisterNetEvent('qb-traphouse:client:target:ViewInventory', function (data)
     TraphouseInventory.label = "traphouse_"..CurrentTraphouse
     TraphouseInventory.items = data.traphouseData.inventory
     TraphouseInventory.slots = 2
-    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
+    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", TraphouseInventory.label, TraphouseInventory)
 end)
 
 RegisterNetEvent('qb-traphouse:client:target:TakeOver', function ()
