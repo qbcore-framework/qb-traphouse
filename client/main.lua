@@ -115,7 +115,7 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
     local coords = traphouseData.coords['interaction']
     local boxName = 'traphouseInteraction' .. traphouseID
     local boxData = traphouseData.polyzoneBoxData['interaction']
-    
+
     local options = {
         {
             type = "client",
@@ -152,6 +152,8 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
         name = boxName,
         heading = boxData.heading,
         debugPoly = boxData.debug,
+        minZ = coords.z - 1.0,
+        maxZ = coords.z + 1.0,
     }, {
         options = options,
         distance = boxData.distance
@@ -193,6 +195,8 @@ local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
         name = boxName,
         heading = boxData.heading,
         debugPoly = boxData.debug,
+        minZ = coords.z - 1.0,
+        maxZ = coords.z + 1.0,
     }, {
         options = {
             {
