@@ -1,7 +1,3 @@
---[[
-Romanian base language translation for qb-traphouse
-Translation done by wanderrer (Martin Riggs#0807 on Discord)
-]]--
 local Translations = {
     error = {
         not_enough = "Nu ai suficienti bani (cash)..",
@@ -49,8 +45,9 @@ local Translations = {
     }
 }
 
-    Lang = Locale:new({
+if GetConvar('qb_locale', 'en') == 'ro' then
+    Lang = Lang or Locale:new({
         phrases = Translations,
         warnOnMissing = true
     })
-
+end
