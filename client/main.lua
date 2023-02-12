@@ -457,6 +457,10 @@ RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function ()
     TriggerEvent('qb-menu:client:closeMenu')
 end)
 
+RegisterNetEvent('qb-traphouse:client:getPin', function (code)
+    Config.TrapHouses[ClosestTraphouse].pincode = code
+end)
+
 
 -- NUI
 
@@ -571,7 +575,7 @@ CreateThread(function ()
     while true do
         wait = 500
         SetClosestTraphouse()
-
+        TriggerServerEvent('qb-traphouse:server:getPin', ClosestTraphouse)
         if ClosestTraphouse ~= nil then
             if not InsideTraphouse then
                 if isInsideEntranceTarget then
@@ -621,3 +625,10 @@ CreateThread(function ()
     end
 
 end)
+
+[[-- for test command
+RegisterNetEvent('test1', function (cela)
+    local cela1 = cela
+    QBCore.Functions.Notify('tu as recu: ' .. cela1)
+end)
+--]]
