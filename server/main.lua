@@ -146,7 +146,7 @@ RegisterServerEvent('qb-traphouse:server:AddHouseKeyHolder', function(CitizenId,
     if Config.TrapHouses[TraphouseId] ~= nil then
         if IsOwner then
             Config.TrapHouses[TraphouseId].keyholders = {}
-            Config.TrapHouses[TraphouseId].pincode = math.random(1111, 4444)
+            Config.TrapHouses[TraphouseId].pincode = math.random(1000, 9999)
         end
 
         if Config.TrapHouses[TraphouseId].keyholders == nil then
@@ -188,10 +188,10 @@ end)
 RegisterServerEvent('qb-traphouse:server:RobNpc', function(Traphouse)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    local Chance = math.random(1, 10)
-    local odd = math.random(1, 10)
+    local Chance = 10 -- Chances on 1000 to obtain sticky note
+    local random = math.random(1, 1000)
 
-    if Chance == odd then
+    if Chance >= random then
         local info = {
             label = Lang:t('info.pincode', {value = Config.TrapHouses[Traphouse].pincode})
         }
@@ -201,6 +201,11 @@ RegisterServerEvent('qb-traphouse:server:RobNpc', function(Traphouse)
         local amount = math.random(1, 80)
         Player.Functions.AddMoney('cash', amount)
     end
+end)
+
+RegisterServerEvent('qb-traphouse:server:getPin', function(clientClosestTrapHouse)
+    local cctp = clientClosestTrapHouse
+    TriggerClientEvent('qb-traphouse:client:getPin', source, Config.TrapHouses[cctp].pincode)
 end)
 
 -- Commands
@@ -219,7 +224,7 @@ QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help =
                 if Config.TrapHouses[Traphouse] ~= nil then
                     if IsOwner then
                         Config.TrapHouses[Traphouse].keyholders = {}
-                        Config.TrapHouses[Traphouse].pincode = math.random(1111, 4444)
+                        Config.TrapHouses[Traphouse].pincode = math.random(1000, 9999)
                     end
 
                     if Config.TrapHouses[Traphouse].keyholders == nil then
@@ -259,3 +264,17 @@ exports("AddHouseItem", AddHouseItem)
 exports("RemoveHouseItem", RemoveHouseItem)
 exports("GetInventoryData", GetInventoryData)
 exports("CanItemBeSaled", CanItemBeSaled)
+
+
+[[-- police can access pincode thru command ?
+QBCore.Commands.Add("test1", "", {}, false, function(source)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if Player.PlayerData.job.name == 'police' then
+        local cela = Config.TrapHouses[1].pincode
+        TriggerClientEvent('test1', src, cela)
+        alarmon = false
+    end
+end)
+
+--]]
