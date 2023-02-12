@@ -41,7 +41,7 @@ Config.TrapHouses = {
             }
         },
         keyholders = {},
-        pincode = 1234,
+        pincode = math.random(1000,9999),
         inventory = {},
         opened = false,
         takingover = false,
