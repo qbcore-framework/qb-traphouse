@@ -575,12 +575,12 @@ CreateThread(function ()
     while true do
         wait = 500
         SetClosestTraphouse()
-        TriggerServerEvent('qb-traphouse:server:getPin', ClosestTraphouse)
         if ClosestTraphouse ~= nil then
             if not InsideTraphouse then
                 if isInsideEntranceTarget then
                     wait = 0
                     if IsControlJustPressed(0, 38) then
+                        TriggerServerEvent('qb-traphouse:server:getPin', ClosestTraphouse)
                         TriggerEvent("qb-traphouse:client:EnterTraphouse")
                         exports['qb-core']:HideText()
                     end
