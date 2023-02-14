@@ -457,8 +457,17 @@ RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function ()
     TriggerEvent('qb-menu:client:closeMenu')
 end)
 
-RegisterNetEvent('qb-traphouse:client:getPin', function (code)
-    Config.TrapHouses[ClosestTraphouse].pincode = code
+RegisterNetEvent('qb-traphouse:client:updatePin', function (code)
+    if ClosestTraphouse ~= nil then
+        Config.TrapHouses[ClosestTraphouse].pincode = code
+    end
+end)
+
+RegisterNetEvent('qb-traphouse:client:showPin', function ()
+    if ClosestTraphouse ~= nil then
+        TriggerServerEvent('qb-traphouse:server:updatePin', ClosestTraphouse)
+        TriggerServerEvent('qb-traphouse:server:showPin', ClosestTraphouse)
+    end
 end)
 
 
@@ -576,11 +585,11 @@ CreateThread(function ()
         wait = 500
         SetClosestTraphouse()
         if ClosestTraphouse ~= nil then
+            TriggerServerEvent('qb-traphouse:server:updatePin', ClosestTraphouse)
             if not InsideTraphouse then
                 if isInsideEntranceTarget then
                     wait = 0
                     if IsControlJustPressed(0, 38) then
-                        TriggerServerEvent('qb-traphouse:server:getPin', ClosestTraphouse)
                         TriggerEvent("qb-traphouse:client:EnterTraphouse")
                         exports['qb-core']:HideText()
                     end
@@ -625,10 +634,3 @@ CreateThread(function ()
     end
 
 end)
-
-[[-- for test command
-RegisterNetEvent('test1', function (cela)
-    local cela1 = cela
-    QBCore.Functions.Notify('tu as recu: ' .. cela1)
-end)
---]]
