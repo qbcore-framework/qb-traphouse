@@ -203,9 +203,16 @@ RegisterServerEvent('qb-traphouse:server:RobNpc', function(Traphouse)
     end
 end)
 
-RegisterServerEvent('qb-traphouse:server:getPin', function(clientClosestTrapHouse)
-    local cctp = clientClosestTrapHouse
-    TriggerClientEvent('qb-traphouse:client:getPin', source, Config.TrapHouses[cctp].pincode)
+RegisterServerEvent('qb-traphouse:server:updatePin', function(clientClosestTrapHouse)
+    if clientClosestTrapHouse ~= nil then
+        TriggerClientEvent('qb-traphouse:client:updatePin', source, Config.TrapHouses[clientClosestTrapHouse].pincode)
+    end
+end)
+
+RegisterServerEvent('qb-traphouse:server:showPin', function(clientClosestTrapHouse)
+    if clientClosestTrapHouse ~= nil then
+        TriggerClientEvent('QBCore:Notify', source, 'PIN: ' .. Config.TrapHouses[clientClosestTrapHouse].pincode, 'success', 5000)
+    end
 end)
 
 -- Commands
@@ -260,21 +267,11 @@ QBCore.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help =
     end
 end)
 
+QBCore.Commands.Add("showpin", "Show nearest traphouse PIN (Admin Only)", {}, false, function(source)
+    TriggerClientEvent('qb-traphouse:client:showPin', source)
+end, 'admin')
+
 exports("AddHouseItem", AddHouseItem)
 exports("RemoveHouseItem", RemoveHouseItem)
 exports("GetInventoryData", GetInventoryData)
 exports("CanItemBeSaled", CanItemBeSaled)
-
-
-[[-- police can access pincode thru command ?
-QBCore.Commands.Add("test1", "", {}, false, function(source)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    if Player.PlayerData.job.name == 'police' then
-        local cela = Config.TrapHouses[1].pincode
-        TriggerClientEvent('test1', src, cela)
-        alarmon = false
-    end
-end)
-
---]]
