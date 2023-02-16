@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'QB-Traphouse'
-version '2.1.0'
+version '2.1.1'
 
 ui_page 'html/index.html'
 
