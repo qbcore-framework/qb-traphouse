@@ -20,6 +20,7 @@ body {
 #PINform {
 	background: #ededed;
 	position: absolute;
+	border-radius: 14px;
 	width: 300px; height: 400px;
 	left: 50%;
 	margin-left: -180px;
@@ -33,6 +34,7 @@ body {
 #PINbox {
 	background: #ededed;
 	margin: 3.5%;
+	border-radius: 8px;
 	width: 92%;
 	font-size: 4em;
 	text-align: center;
