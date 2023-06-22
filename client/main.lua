@@ -485,7 +485,8 @@ end)
 CreateThread(function()
     while true do
         local aiming, targetPed = GetEntityPlayerIsFreeAimingAt(PlayerId(-1))
-        if targetPed ~= 0 and not IsPedAPlayer(targetPed) then
+        local pedType = GetEntityType(targetPed)
+        if targetPed ~= 0 and not IsPedAPlayer(targetPed) and pedType == 1 and (IsPedArmed(PlayerPedId(), 1) or IsPedArmed(PlayerPedId(), 4)) then
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)
             if ClosestTraphouse ~= nil then
@@ -525,7 +526,7 @@ CreateThread(function()
                                 SetTimeout(RobbingTime, function()
                                     IsRobbingNPC = false
                                     RobTimeout(math.random(30000, 60000))
-                                    if not IsEntityDead(targetPed) then
+                                    if not IsEntityDead(targetPed) and pedType == 1 then
                                         if CanRob then
                                             if InDistance then
                                                 SetEveryoneIgnorePlayer(PlayerId(), false)
