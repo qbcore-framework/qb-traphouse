@@ -1,10 +1,9 @@
 fx_version 'cerulean'
 game 'gta5'
-
-description 'QB-Traphouse'
+lua54 'yes'
+author 'Kakarot'
+description 'Allows players to takeover a location to clean money and sell items'
 version '2.1.1'
-
-ui_page 'html/index.html'
 
 shared_scripts {
     'config.lua',
@@ -22,8 +21,8 @@ client_script {
 
 server_script 'server/*.lua'
 
+ui_page 'html/index.html'
+
 files {
     'html/*'
 }
-
-lua54 'yes'

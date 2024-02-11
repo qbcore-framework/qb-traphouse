@@ -9,11 +9,11 @@ Config.TakeoverPrice = 5000
 Config.TrapHouses = {
     [1] = {
         coords = {
-            ["enter"] = vector3(-1202.21, -1308.48, 4.92),
-            ["interaction"] = vector3(-1207.63, -1311.75, -32.65),
+            ['enter'] = vector3(-1202.21, -1308.48, 4.92),
+            ['interaction'] = vector3(-1207.63, -1311.75, -32.65),
         },
         polyzoneBoxData = {
-            ["enter"] = {
+            ['enter'] = {
                 heading = 290,
                 minZ = 4.0,
                 maxZ = 6.0,
@@ -23,7 +23,7 @@ Config.TrapHouses = {
                 distance = 2.0,
                 created = false
             },
-            ["interaction"] = {
+            ['interaction'] = {
                 heading = 180,
                 debug = false,
                 length = 1,
@@ -31,7 +31,7 @@ Config.TrapHouses = {
                 distance = 1.0,
                 created = false
             },
-            ["exit"] = {
+            ['exit'] = {
                 heading = 180,
                 debug = false,
                 length = 1,
@@ -50,88 +50,88 @@ Config.TrapHouses = {
 }
 
 Config.AllowedItems = {
-    ["metalscrap"] = {
-        name = "metalscrap",
+    ['metalscrap'] = {
+        name = 'metalscrap',
         wait = 500,
         reward = 3,
     },
-    ["copper"] = {
-        name = "copper",
+    ['copper'] = {
+        name = 'copper',
         wait = 500,
         reward = 2,
     },
-    ["iron"] = {
-        name = "iron",
+    ['iron'] = {
+        name = 'iron',
         wait = 500,
         reward = 2,
     },
-    ["aluminum"] = {
-        name = "aluminum",
+    ['aluminum'] = {
+        name = 'aluminum',
         wait = 500,
         reward = 2,
     },
-    ["steel"] = {
-        name = "steel",
+    ['steel'] = {
+        name = 'steel',
         wait = 500,
         reward = 2,
     },
-    ["glass"] = {
-        name = "glass",
+    ['glass'] = {
+        name = 'glass',
         wait = 500,
         reward = 2,
     },
-    ["lockpick"] = {
-        name = "lockpick",
+    ['lockpick'] = {
+        name = 'lockpick',
         wait = 10000,
         reward = 150,
     },
-    ["screwdriverset"] = {
-        name = "screwdriverset",
+    ['screwdriverset'] = {
+        name = 'screwdriverset',
         wait = 10000,
         reward = 300,
     },
-    ["electronickit"] = {
-        name = "electronickit",
+    ['electronickit'] = {
+        name = 'electronickit',
         wait = 10000,
         reward = 300,
     },
-    ["radioscanner"] = {
-        name = "radioscanner",
+    ['radioscanner'] = {
+        name = 'radioscanner',
         wait = 10000,
         reward = 850,
     },
-    ["gatecrack"] = {
-        name = "gatecrack",
+    ['gatecrack'] = {
+        name = 'gatecrack',
         wait = 10000,
         reward = 600,
     },
-    ["trojan_usb"] = {
-        name = "trojan_usb",
+    ['trojan_usb'] = {
+        name = 'trojan_usb',
         wait = 10000,
         reward = 1000,
     },
-    ["weed_brick"] = {
-        name = "weed_brick",
+    ['weed_brick'] = {
+        name = 'weed_brick',
         wait = 5000,
         reward = 250,
     },
-    ["phone"] = {
-        name = "phone",
+    ['phone'] = {
+        name = 'phone',
         wait = 2000,
         reward = 750,
     },
-    ["radio"] = {
-        name = "radio",
+    ['radio'] = {
+        name = 'radio',
         wait = 2000,
         reward = 180,
     },
-    ["handcuffs"] = {
-        name = "handcuffs",
+    ['handcuffs'] = {
+        name = 'handcuffs',
         wait = 2000,
         reward = 400,
     },
-    ["10kgoldchain"] = {
-        name = "10kgoldchain",
+    ['10kgoldchain'] = {
+        name = '10kgoldchain',
         wait = 10000,
         reward = 3000,
     },
