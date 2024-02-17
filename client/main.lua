@@ -387,10 +387,12 @@ RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function()
     if ClosestTraphouse ~= nil then
         local data = Config.TrapHouses[ClosestTraphouse]
         if not IsKeyHolder then
-            SendNUIMessage({
-                action = "open"
-            })
-            SetNuiFocus(true, true)
+            local result = exports['qb-minigames']:StartPinpad(data.pincode)
+            if not result.correct then
+                    QBCore.Functions.Notify(Lang:t("error.incorrect_code"), "error")
+            else
+                EnterTraphouse(data)
+            end
         else
             EnterTraphouse(data)
         end
@@ -457,28 +459,6 @@ RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function ()
     TriggerEvent('qb-menu:client:closeMenu')
 end)
 
-
--- NUI
-
-RegisterNUICallback('PinpadClose', function(_, cb)
-    SetNuiFocus(false, false)
-    cb('ok')
-end)
-
-RegisterNUICallback('ErrorMessage', function(data, cb)
-    QBCore.Functions.Notify(data.message, 'error')
-    cb('ok')
-end)
-
-RegisterNUICallback('EnterPincode', function(d, cb)
-    local data = Config.TrapHouses[ClosestTraphouse]
-    if tonumber(d.pin) == data.pincode then
-        EnterTraphouse(data)
-    else
-        QBCore.Functions.Notify(Lang:t("error.incorrect_code"), 'error')
-    end
-    cb('ok')
-end)
 
 -- Threads
 
