@@ -55,7 +55,7 @@ local function RegisterTraphouseEntranceZone(traphouseID, traphouseData)
         maxZ = boxData.maxZ,
     })
 
-    zone:onPlayerInOut(function (isPointInside)
+    zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
             exports['qb-core']:DrawText('[E] ' .. Lang:t('targetInfo.enter'), 'left')
         else
@@ -96,7 +96,7 @@ local function RegisterTraphouseInteractionZone(traphouseID, traphouseData)
         maxZ = coords.z + 1.0,
     })
 
-    zone:onPlayerInOut(function (isPointInside)
+    zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
             exports['qb-core']:DrawText('[E] ' .. Lang:t('targetInfo.options'), 'left')
         else
@@ -118,31 +118,31 @@ local function RegisterTraphouseInteractionTarget(traphouseID, traphouseData)
 
     local options = {
         {
-            type = "client",
-            event = "qb-traphouse:client:target:TakeOver",
-            label = Lang:t("targetInfo.take_over"),
+            type = 'client',
+            event = 'qb-traphouse:client:target:TakeOver',
+            label = Lang:t('targetInfo.take_over'),
         },
     }
     if IsKeyHolder then
         options = {
             {
-                type = "client",
-                event = "qb-traphouse:client:target:ViewInventory",
-                label = Lang:t("targetInfo.inventory"),
+                type = 'client',
+                event = 'qb-traphouse:client:target:ViewInventory',
+                label = Lang:t('targetInfo.inventory'),
                 traphouseData = traphouseData
             },
             {
-                type = "client",
-                event = "qb-traphouse:client:target:TakeMoney",
-                label = Lang:t('targetInfo.take_cash', {value = traphouseData.money}),
+                type = 'client',
+                event = 'qb-traphouse:client:target:TakeMoney',
+                label = Lang:t('targetInfo.take_cash', { value = traphouseData.money }),
             },
         }
 
         if IsHouseOwner then
-            options[#options+1] = {
-                type = "client",
-                event = "qb-traphouse:client:target:SeePinCode",
-                label = Lang:t("targetInfo.pin_code_see"),
+            options[#options + 1] = {
+                type = 'client',
+                event = 'qb-traphouse:client:target:SeePinCode',
+                label = Lang:t('targetInfo.pin_code_see'),
                 traphouseData = traphouseData
             }
         end
@@ -174,9 +174,9 @@ local function RegisterTraphouseExitZone(coords, traphouseID, traphouseData)
         maxZ = coords.z + 1.0,
     })
 
-    zone:onPlayerInOut(function (isPointInside)
+    zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
-            exports['qb-core']:DrawText('[E] ' .. Lang:t("targetInfo.leave"), 'left')
+            exports['qb-core']:DrawText('[E] ' .. Lang:t('targetInfo.leave'), 'left')
         else
             exports['qb-core']:HideText()
         end
@@ -200,9 +200,9 @@ local function RegisterTraphouseExitTarget(coords, traphouseID, traphouseData)
     }, {
         options = {
             {
-                type = "client",
-                event = "qb-traphouse:client:target:ExitTraphouse",
-                label = Lang:t("targetInfo.leave"),
+                type = 'client',
+                event = 'qb-traphouse:client:target:ExitTraphouse',
+                label = Lang:t('targetInfo.leave'),
                 traphouseID = traphouseID,
             },
         },
@@ -215,33 +215,33 @@ end
 local function OpenHeaderMenu(data)
     local headerMenu = {}
 
-    headerMenu[#headerMenu+1] = {
-        header = Lang:t("targetInfo.options"),
+    headerMenu[#headerMenu + 1] = {
+        header = Lang:t('targetInfo.options'),
         isMenuHeader = true
     }
 
     if IsKeyHolder then
-        headerMenu[#headerMenu+1] = {
-            header = Lang:t("targetInfo.inventory"),
+        headerMenu[#headerMenu + 1] = {
+            header = Lang:t('targetInfo.inventory'),
             params = {
-                event = "qb-traphouse:client:target:ViewInventory",
+                event = 'qb-traphouse:client:target:ViewInventory',
                 args = {
                     traphouseData = data
                 }
             }
         }
-        headerMenu[#headerMenu+1] = {
-            header = Lang:t('targetInfo.take_cash', {value = data.money}),
+        headerMenu[#headerMenu + 1] = {
+            header = Lang:t('targetInfo.take_cash', { value = data.money }),
             params = {
-                event = "qb-traphouse:client:target:TakeMoney"
+                event = 'qb-traphouse:client:target:TakeMoney'
             }
         }
 
         if IsHouseOwner then
-            headerMenu[#headerMenu+1] = {
-                header = Lang:t("targetInfo.pin_code_see"),
+            headerMenu[#headerMenu + 1] = {
+                header = Lang:t('targetInfo.pin_code_see'),
                 params = {
-                    event = "qb-traphouse:client:target:SeePinCode",
+                    event = 'qb-traphouse:client:target:SeePinCode',
                     args = {
                         traphouseData = data
                     }
@@ -249,18 +249,18 @@ local function OpenHeaderMenu(data)
             }
         end
     else
-        headerMenu[#headerMenu+1] = {
-            header = Lang:t("targetInfo.take_over"),
+        headerMenu[#headerMenu + 1] = {
+            header = Lang:t('targetInfo.take_over'),
             params = {
-                event = "qb-traphouse:client:target:TakeOver",
+                event = 'qb-traphouse:client:target:TakeOver',
             }
         }
     end
 
-    headerMenu[#headerMenu+1] = {
-        header = Lang:t("targetInfo.close_menu"),
+    headerMenu[#headerMenu + 1] = {
+        header = Lang:t('targetInfo.close_menu'),
         params = {
-            event = "qb-traphouse:client:target:CloseMenu",
+            event = 'qb-traphouse:client:target:CloseMenu',
         }
     }
 
@@ -320,8 +320,8 @@ local function SetClosestTraphouse()
 end
 
 local function EnterTraphouse(data)
-    local coords = { x = data.coords["enter"].x, y = data.coords["enter"].y, z= data.coords["enter"].z - Config.MinZOffset}
-    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+    local coords = { x = data.coords['enter'].x, y = data.coords['enter'].y, z = data.coords['enter'].z - Config.MinZOffset }
+    TriggerServerEvent('InteractSound_SV:PlayOnSource', 'houses_door_open', 0.25)
     data = exports['qb-interior']:CreateTrevorsShell(coords)
     TraphouseObj = data[1]
     POIOffsets = data[2]
@@ -333,13 +333,13 @@ end
 
 local function LeaveTraphouse(k, data)
     local ped = PlayerPedId()
-    TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+    TriggerServerEvent('InteractSound_SV:PlayOnSource', 'houses_door_open', 0.25)
     DoScreenFadeOut(250)
     Wait(250)
     exports['qb-interior']:DespawnInterior(TraphouseObj, function()
         TriggerEvent('qb-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
-        SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
+        SetEntityCoords(ped, data.coords['enter'].x, data.coords['enter'].y, data.coords['enter'].z + 0.5)
         SetEntityHeading(ped, 107.71)
         TraphouseObj = nil
         POIOffsets = nil
@@ -387,10 +387,10 @@ RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function()
     if ClosestTraphouse ~= nil then
         local data = Config.TrapHouses[ClosestTraphouse]
         if not IsKeyHolder then
-            SendNUIMessage({
-                action = "open"
-            })
-            SetNuiFocus(true, true)
+            local result = exports['qb-minigames']:StartPinpad(data.pincode)
+            if result.quit then return end
+            if not result.correct then return QBCore.Functions.Notify(Lang:t('error.incorrect_code'), 'error') end
+            EnterTraphouse(data)
         else
             EnterTraphouse(data)
         end
@@ -398,7 +398,7 @@ RegisterNetEvent('qb-traphouse:client:EnterTraphouse', function()
 end)
 
 RegisterNetEvent('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
-    QBCore.Functions.Progressbar("takeover_traphouse", Lang:t("info.taking_over"), math.random(1000, 3000), false, true, {
+    QBCore.Functions.Progressbar('takeover_traphouse', Lang:t('info.taking_over'), math.random(1000, 3000), false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
@@ -406,31 +406,31 @@ RegisterNetEvent('qb-traphouse:client:TakeoverHouse', function(TraphouseId)
     }, {}, {}, {}, function() -- Done
         TriggerServerEvent('qb-traphouse:server:AddHouseKeyHolder', PlayerData.citizenid, TraphouseId, true)
     end, function()
-        QBCore.Functions.Notify(Lang:t("error.cancelled"), "error")
+        QBCore.Functions.Notify(Lang:t('error.cancelled'), 'error')
     end)
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:ViewInventory', function (data)
+RegisterNetEvent('qb-traphouse:client:target:ViewInventory', function(data)
     local TraphouseInventory = {}
-    TraphouseInventory.label = "traphouse_"..CurrentTraphouse
+    TraphouseInventory.label = 'traphouse_' .. CurrentTraphouse
     TraphouseInventory.items = data.traphouseData.inventory
     TraphouseInventory.slots = 2
-    TriggerServerEvent("inventory:server:OpenInventory", "traphouse", TraphouseInventory.label, TraphouseInventory)
+    TriggerServerEvent('inventory:server:OpenInventory', 'traphouse', TraphouseInventory.label, TraphouseInventory)
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:TakeOver', function ()
+RegisterNetEvent('qb-traphouse:client:target:TakeOver', function()
     TriggerServerEvent('qb-traphouse:server:TakeoverHouse', CurrentTraphouse)
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:TakeMoney', function ()
-    TriggerServerEvent("qb-traphouse:server:TakeMoney", CurrentTraphouse)
+RegisterNetEvent('qb-traphouse:client:target:TakeMoney', function()
+    TriggerServerEvent('qb-traphouse:server:TakeMoney', CurrentTraphouse)
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:SeePinCode', function (data)
+RegisterNetEvent('qb-traphouse:client:target:SeePinCode', function(data)
     QBCore.Functions.Notify(Lang:t('info.pin_code', { value = data.traphouseData.pincode }))
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:ExitTraphouse', function (data)
+RegisterNetEvent('qb-traphouse:client:target:ExitTraphouse', function(data)
     LeaveTraphouse(data.traphouseID, Config.TrapHouses[data.traphouseID])
 end)
 
@@ -453,31 +453,8 @@ RegisterNetEvent('qb-traphouse:client:SyncData', function(k, data)
     end
 end)
 
-RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function ()
+RegisterNetEvent('qb-traphouse:client:target:CloseMenu', function()
     TriggerEvent('qb-menu:client:closeMenu')
-end)
-
-
--- NUI
-
-RegisterNUICallback('PinpadClose', function(_, cb)
-    SetNuiFocus(false, false)
-    cb('ok')
-end)
-
-RegisterNUICallback('ErrorMessage', function(data, cb)
-    QBCore.Functions.Notify(data.message, 'error')
-    cb('ok')
-end)
-
-RegisterNUICallback('EnterPincode', function(d, cb)
-    local data = Config.TrapHouses[ClosestTraphouse]
-    if tonumber(d.pin) == data.pincode then
-        EnterTraphouse(data)
-    else
-        QBCore.Functions.Notify(Lang:t("error.incorrect_code"), 'error')
-    end
-    cb('ok')
 end)
 
 -- Threads
@@ -490,7 +467,7 @@ CreateThread(function()
             local pos = GetEntityCoords(ped)
             if ClosestTraphouse ~= nil then
                 local data = Config.TrapHouses[ClosestTraphouse]
-                local dist = #(pos - data.coords["enter"])
+                local dist = #(pos - data.coords['enter'])
                 if dist < 200 then
                     if aiming then
                         local pcoords = GetEntityCoords(targetPed)
@@ -517,7 +494,7 @@ CreateThread(function()
                                 SetBlockingOfNonTemporaryEvents(targetPed, true)
                                 TaskPlayAnim(targetPed, dict, 'handsup_standing_base', 2.0, -2, 15.0, 1, 0, 0, 0, 0)
                                 for _ = 1, RobbingTime / 2, 1 do
-                                    PlayPedAmbientSpeechNative(targetPed, "GUN_BEG", "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
+                                    PlayPedAmbientSpeechNative(targetPed, 'GUN_BEG', 'SPEECH_PARAMS_FORCE_NORMAL_CLEAR')
                                     Wait(2000)
                                 end
                                 FreezeEntityPosition(targetPed, true)
@@ -555,7 +532,7 @@ CreateThread(function()
     end
 end)
 
-CreateThread(function ()
+CreateThread(function()
     local wait = 500
     while not LocalPlayer.state.isLoggedIn do
         -- do nothing
@@ -577,14 +554,14 @@ CreateThread(function ()
                 if isInsideEntranceTarget then
                     wait = 0
                     if IsControlJustPressed(0, 38) then
-                        TriggerEvent("qb-traphouse:client:EnterTraphouse")
+                        TriggerEvent('qb-traphouse:client:EnterTraphouse')
                         exports['qb-core']:HideText()
                     end
                 end
             else
                 local data = Config.TrapHouses[ClosestTraphouse]
                 if not data.polyzoneBoxData['exit'].created then
-                    local exitCoords = vector3(data.coords["enter"].x + POIOffsets.exit.x, data.coords["enter"].y + POIOffsets.exit.y, data.coords["enter"].z - Config.MinZOffset + POIOffsets.exit.z)
+                    local exitCoords = vector3(data.coords['enter'].x + POIOffsets.exit.x, data.coords['enter'].y + POIOffsets.exit.y, data.coords['enter'].z - Config.MinZOffset + POIOffsets.exit.z)
                     if Config.UseTarget then
                         RegisterTraphouseExitTarget(exitCoords, CurrentTraphouse, data)
                     else
@@ -619,5 +596,4 @@ CreateThread(function ()
         end
         Wait(wait)
     end
-
 end)

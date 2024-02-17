@@ -1,6 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-
 -- Functions
 
 local function HasCitizenIdHasKey(CitizenId, Traphouse)
